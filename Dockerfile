@@ -14,4 +14,4 @@ RUN apt install -y python3-flask
 
 
 EXPOSE 8080
-CMD /wait && flask --app app run --host=0.0.0.0 -p 8080
+CMD /wait && flask --app App.app run --host=0.0.0.0 -p 8080
