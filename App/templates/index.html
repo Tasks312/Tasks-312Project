@@ -1,20 +1,75 @@
 <!DOCTYPE html>
 <head>
     <title>Project Part 2</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-    <link type="image/png" sizes="16x16" rel="icon" href="\static\images\tempLogo.png">
+    <link rel="stylesheet" type="text/css" href="\static\css\style.css">
+    <link type="image/png" sizes="16x16" rel="icon" href="\static\images\TASKSFavicon.png">
 </head>
-<body onload="welcome();"> 
-    
-<p id="paragraph">
-    This text is from the HTML file 🙂
-</p>
 
-<img src="\static\images\tempLogo.png" alt="Temp Logo" class="my_image"/>
+<body onload="welcome();">
 
-<br/>
-<hr/>
+    <div class="title">
+        <h2>CSE312 App</h2>
+    </div>
     
-<script src="/static/js/function.js"></script>
-</body>
-</html>
+    <div class="header">
+        <div>
+            <img src="\static\images\TASKSFavicon.png" alt="TASKS Favicon" class="my_image"/></div>
+        <div>
+            <p id="paragraph">
+                Welcome to CSE312 Social. You're one stop for chat, image sharing, and DMs 🙂
+            </p>
+        </div>
+    </div>
+    
+    
+    <div class="contents">
+        <div class="chat">
+            <div id="chat-messages">
+            </div>
+    
+            <div class="chat-form">
+                <hr>
+                <label>
+                    Chat:
+                    <input id="chat-text-box" type="text">
+                </label>
+                {% comment %} <input value="{{xsrf_token}}" name="xsrf_token" id="xsrf_token" hidden> {% endcomment %}
+                <button id="chat-button" onclick="sendChat()">Send</button>
+            </div>
+    
+        </div>
+        <div class="user-list">
+    
+    
+            Register:
+            <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+                <label>Username:
+                    <input id="reg-form-username" type="text" name="username_reg"/>
+                </label>
+                <br/>
+                <label>Password:&nbsp;
+                    <input id="reg-form-pass" type="password" name="password_reg">
+                </label>
+                <input type="submit" value="Post">
+            </form>
+    
+            Login:
+            <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+                <label>Username:
+                    <input id="login-form-username" type="text" name="username_login"/>
+                </label>
+                <br/>
+                <label>Password:&nbsp;
+                    <input id="login-form-pass" type="password" name="password_login">
+                </label>
+                <input type="submit" value="Post">
+            </form>
+    
+    
+        </div>
+    </div>
+    
+    
+    <script src="\static\js\function.js"></script>
+    </body>
+    </html>
