@@ -8,7 +8,7 @@ def init_mongo():
     if ('mongo' not in g):
         g.mongo = PyMongo(current_app)
     
-    return g.mongo
+    return g.mongo.db
 
 # returns a cursor for a user with that username (or None)
 def get_user_by_name(username: str):

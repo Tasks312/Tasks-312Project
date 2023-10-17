@@ -18,9 +18,9 @@ def create_app(test_config = None):
         return render_template("index.html")
 
     @app.route("/register", methods=["POST"])
-    def register(response):
-        username = request.form["username"]
-        password = request.form["password"]
+    def register():
+        username = request.form["username_reg"]
+        password = request.form["password_reg"]
 
         token, err = db.register(username, password)
 
