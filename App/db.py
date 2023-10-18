@@ -26,20 +26,18 @@ def get_user_by_token(token: str):
 # this is the unencrypted token so the cookie can be set
 def register(username: str, password: str):
     if (not username):
-        return (None, "No username")
+        return "No username"
     elif (not password):
-        return (None, "No password")
+        return "No password"
 
     users = init_mongo().users
 
     if (get_user_by_name(username)):
-        return (None, "Username already in use")
+        return "Username already in use"
 
-    token = bcrypt.gen_token()
     users.insert_one({
         "username": username,
-        "password": bcrypt.hash(password),
-        "authtoken" : bcrypt.hash(token)
+        "password": bcrypt.hash(password)
     })
 
-    return (token, None)
+    return None

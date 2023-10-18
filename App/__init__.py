@@ -22,7 +22,7 @@ def create_app(test_config = None):
         username = request.form["username_reg"]
         password = request.form["password_reg"]
 
-        token, err = db.register(username, password)
+        err = db.register(username, password)
 
         if (err):
             response = make_response(err)
@@ -31,7 +31,6 @@ def create_app(test_config = None):
 
         response = make_response("OK")
         response.status_code = 200
-        response.set_cookie("authtoken", token, max_age=36000, httponly = True)
         return response
 
 
