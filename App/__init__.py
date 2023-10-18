@@ -32,7 +32,23 @@ def create_app(test_config = None):
         response = make_response("OK")
         response.status_code = 200
         return response
+    
+    @app.route("/login", methods=["POST"])
+    def login():
+        username = request.form["username_login"]
+        password = request.form["password_login"]
 
+        token, err = db.login(username, password)
+
+        if (err):
+            response = make_response(err)
+            response.status_code = 400
+            return response
+        
+        response = make_response("OK")
+        response.status_code = 200
+        response.set_cookie("authtoken", token, max_age=36000, httponly = True)
+        return response
 
     @app.after_request
     def set_nosniff(response):

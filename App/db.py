@@ -41,3 +41,23 @@ def register(username: str, password: str):
     })
 
     return None
+
+def login(username: str, password: str):
+    if (not username):
+        return (None, "No username")
+    elif (not password):
+        return (None, "No password")
+    
+    if (get_user_by_name(username)):
+        hash = get_user_by_name(username)['password']# The hashed passsword fromreturn users.find_one({"username": username})
+        compare = bcrypt.hash_compare(hash,password)
+        if(not compare):
+            return(None, "Incorrect Username/Password")
+        token = bcrypt.gen_token()
+        users = init_mongo().users
+        users.insert_one({
+            "username": username,
+            "password": bcrypt.hash(password),
+            "authtoken" : bcrypt.hash(token)
+        })
+        return token, None
