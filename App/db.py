@@ -60,16 +60,21 @@ def login(username: str, password: str):
     elif (not password):
         return (None, "No password")
     
-    if (get_user_by_name(username)):
-        hash = get_user_by_name(username)['password']# The hashed passsword fromreturn users.find_one({"username": username})
+    user = get_user_by_name(username)
+    if (user):
+        hash = user['password']# The hashed passsword fromreturn users.find_one({"username": username})
         compare = bcrypt.hash_compare(hash,password)
         if(not compare):
             return(None, "Incorrect Username/Password")
+        
         token = bcrypt.gen_token()
         users = init_mongo().users
-        users.insert_one({
+
+        users.update_one({"username": username},
+        {"$set":{
             "username": username,
             "password": bcrypt.hash(password),
             "authtoken" : bcrypt.hash(token)
-        })
+        }})
+
         return token, None
