@@ -1,3 +1,4 @@
+import secrets
 from flask_bcrypt import Bcrypt
 
 from flask import current_app, g
@@ -15,4 +16,4 @@ def hash_compare(hash, rawstring: str):
     return init_bcrypt().check_password_hash(hash, rawstring)
 
 def gen_token():
-    return "I DONT KNOW HOW TO DO THIS PLEASE HELP"
+    return secrets.token_hex(16)
