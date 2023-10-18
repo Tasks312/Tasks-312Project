@@ -6,15 +6,15 @@ body {
 a
 .my_image {
     /*width: 120px;*/
-    height: 80%;
+    height: 60%;
 }
 
 img.post {
-    width: 120px;
+    width: 110px;
 }
 
 .title{
-    height: 5%;
+    height: 25%;
 }
 
 .header{
@@ -32,35 +32,20 @@ img.post {
     height: 78%
 }
 
-.chat{
-    /*height:100%;*/
-    width: 70%;
-    background-color: #146C94;
-    padding: 20px;
-    /*overflow: scroll;*/
-}
 
-#chat-messages{
-    height: 90%;
-    /*width: 70%;*/
-    /*background-color: aqua;*/
-    /*padding: 20px;*/
-    overflow: scroll;
-}
 
-.chat-form{
-    /*width: 70%;*/
-    /*background-color: aqua;*/
-    /*padding: 20px;*/
-    /*overflow: scroll;*/
-    height: 30px;
-}
-
-.user-list{
-    width: 30%;
-    background-color: #19A7CE;
+.user-list {
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between; 
+    height: 40%;
+    width: 50%;
+    background-color: #ce1973;
     padding: 20px;
 }
+
+
+ 
 
 .header > div{
     padding: 20px;
