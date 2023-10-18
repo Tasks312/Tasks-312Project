@@ -22,6 +22,18 @@ def get_user_by_token(token: str):
 
     return users.find_one({"authtoken": bcrypt.hash(token)}) 
 
+# returns a cursor for a user with the auth token from the request cookie (or None)
+def get_user_by_request(request):
+    token = request.cookies.get("authtoken")
+    if (not token):
+        return None
+    
+    return get_user_by_token(token)
+
+# returns true if request is from an authenticated user
+def is_user_authenticated(request):
+    return get_user_by_request(request) != None
+
 # returns a tuple of (token, error). token is None on error
 # this is the unencrypted token so the cookie can be set
 def register(username: str, password: str):
