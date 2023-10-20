@@ -17,3 +17,18 @@ def hash_compare(hash, rawstring: str):
 
 def gen_token():
     return secrets.token_hex(16)
+
+def escape_html(string: str):
+    escaped = ""
+
+    for chr in string:
+        if chr == '&':
+            escaped += "&amp"
+        elif chr == '<':
+            escaped += "&lt"
+        elif chr == '>':
+            escaped += "&gt"
+        else:
+            escaped += chr
+
+    return escaped

@@ -42,6 +42,8 @@ def register(username: str, password: str):
     elif (not password):
         return "No password"
 
+    username = bcrypt.escape_html(username)
+
     users = init_mongo().users
 
     if (get_user_by_name(username)):
@@ -59,6 +61,8 @@ def login(username: str, password: str):
         return (None, "No username")
     elif (not password):
         return (None, "No password")
+    
+    username = bcrypt.escape_html(username)
     
     user = get_user_by_name(username)
     if (user):
