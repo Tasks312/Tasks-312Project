@@ -50,35 +50,9 @@
 
 
     </div>
-
-    <div class="post-creation">
-        Create a Post:
-        <form action="/create_post" method="post" enctype="application/x-www-form-urlencoded">
-            <label>Title:
-                <input type="text" name="title" id="title"/>
-            </label>
-            <br/>
-            <label>Description:
-                <textarea name="description" id="description"></textarea>
-            </label>
-            <input type="submit" value="Post" >
-        </form>
-    </div>
-
-    <div class="posts">
-        {% for post in posts %}
-            <div class="post" id="post">
-                <h3>{{ post.title }}</h3>
-                <p>{{ post.description }}</p>
-                <span>Posted by: {{ post.username }}</span>
-            </div>
-        {% endfor %}
-    </div>
-
-
 </div>
     
     
-<script src="static/js/function.js"></script>
-</body>
-</html>
+    <script src="static/js/function.js"></script>
+    </body>
+    </html>
