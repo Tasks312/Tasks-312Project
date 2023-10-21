@@ -3,18 +3,18 @@ body {
     background-color: #000000;
     color: white;
 }
-a
+
 .my_image {
     /*width: 120px;*/
-    height: 60%;
+    height: 80%;
 }
 
 img.post {
-    width: 110px;
+    width: 120px;
 }
 
 .title{
-    height: 25%;
+    height: 5%;
 }
 
 .header{
@@ -32,20 +32,35 @@ img.post {
     height: 78%
 }
 
-
-
-.user-list {
-    display: flex;
-    flex-direction: column; 
-    justify-content: space-between; 
-    height: 40%;
-    width: 50%;
-    background-color: #ce1973;
+.chat{
+    /*height:100%;*/
+    width: 70%;
+    background-color: #146C94;
     padding: 20px;
+    /*overflow: scroll;*/
 }
 
+#chat-messages{
+    height: 90%;
+    /*width: 70%;*/
+    /*background-color: aqua;*/
+    /*padding: 20px;*/
+    overflow: scroll;
+}
 
- 
+.chat-form{
+    /*width: 70%;*/
+    /*background-color: aqua;*/
+    /*padding: 20px;*/
+    /*overflow: scroll;*/
+    height: 30px;
+}
+
+.user-list{
+    width: 30%;
+    background-color: #19A7CE;
+    padding: 20px;
+}
 
 .header > div{
     padding: 20px;

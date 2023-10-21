@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <title>Project Part 2</title>
-    <link rel="stylesheet" type="text/css" href="\static\css\style.css">
+    <link rel="stylesheet" type="text/css" href="static/css/style.css">
     <link type="image/png" sizes="16x16" rel="icon" href="\static\images\TASKSFavicon.png">
 </head>
 
@@ -13,7 +13,7 @@
     
     <div class="header">
         <div>
-            <img src="\static\images\tempLogo.png" alt="TASKS Favicon" class="my_image"/></div>
+            <img src="static/images/eagle.jpg" alt="TASKS Favicon" class="my_image"/></div>
         <div>
             <p id="paragraph">
                 Hi, Welcome to TASKS HOMEPAGE🙂
@@ -22,44 +22,37 @@
     </div>
     
     
-    <div class="contents">
-        
-        <div class="user-list">
-    
-    
-            Register:
-            <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
-                <label>Username:
-                    <input id="reg-form-username" type="text" name="username_reg"/>
-                </label>
-                <br/>
-                <label>Password:&nbsp;
-                    <input id="reg-form-pass" type="password" name="password_reg">
-                </label>
-                <input type="submit" value="Post">
-            </form>
-    
-            Login:
-            <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
-                <label>Username:
-                    <input id="login-form-username" type="text" name="username_login"/>
-                </label>
-                <br/>
-                <label>Password:&nbsp;
-                    <input id="login-form-pass" type="password" name="password_login">
-                </label>
-                <input type="submit" value="Post">
-            </form>
-    
-    
-        </div>
-        <div class="user-info">
-                <p id="user-username">Welcome:  <span id="username-display"></span></p>
-            </div>
-        </div>
+<div class="contents">
+    <div class="user-list">
+        Register:
+        <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+            <label>Username:
+                <input id="reg-form-username" type="text" name="username_reg"/>
+            </label>
+            <br/>
+            <label>Password:&nbsp;
+                <input id="reg-form-pass" type="password" name="password_reg">
+            </label>
+            <input type="submit" value="Post">
+        </form>
+
+        Login:
+        <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+            <label>Username:
+                <input id="login-form-username" type="text" name="username_login"/>
+            </label>
+            <br/>
+            <label>Password:&nbsp;
+                <input id="login-form-pass" type="password" name="password_login">
+            </label>
+            <input type="submit" value="Post">
+        </form>
+
+
     </div>
+</div>
     
     
-    <script src="\static\js\function.js"></script>
+    <script src="static/js/function.js"></script>
     </body>
     </html>

@@ -1,4 +1,4 @@
-from flask import Flask, request, make_response, render_template
+from flask import Flask, redirect, request, make_response, render_template
 
 import os
 
@@ -29,8 +29,8 @@ def create_app(test_config = None):
             response.status_code = 400
             return response
 
-        response = make_response("OK")
-        response.status_code = 200
+        response = make_response(redirect("/"),"OK")
+        response.status_code = 301
         return response
     
     @app.route("/login", methods=["POST"])
@@ -45,8 +45,8 @@ def create_app(test_config = None):
             response.status_code = 400
             return response
         
-        response = make_response("OK")
-        response.status_code = 200
+        response = make_response(redirect("/"), "OK")
+        response.status_code = 301
         response.set_cookie("authtoken", token, max_age=36000, httponly = True)
         return response
 
