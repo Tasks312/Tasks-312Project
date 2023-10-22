@@ -75,7 +75,7 @@ def create_app(test_config = None):
             response.status_code = 401
             return response
 
-        postInsert = db.create_posts(username=user["username"], title=title, description=description)
+        postInsert = db.create_post(username=user["username"], title=title, description=description)
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         return response
