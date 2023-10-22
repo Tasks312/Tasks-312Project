@@ -64,6 +64,23 @@ def create_app(test_config = None):
         response.set_cookie("authtoken", token, max_age=36000, httponly = True)
         return response
 
+    @app.route("/create_post", methods=["POST"])
+    def createPost():
+        title = request.form["title"]
+        description = request.form["description"]
+        
+        user = db.get_user_by_token(request=request)
+        if not user:
+            response = make_response(redirect("/"), "unauthorized")
+            response.status_code = 401
+            return response
+
+        postInsert = db.create_posts(username=user["username"], title=title, description=description)
+        response = make_response(redirect("/"), "OK")
+        response.status_code = 301
+        return response
+
+        
     @app.route("/like-post/<postID>", methods=["POST"])
     def like(postID = None):
         user = db.get_user_by_request(request)

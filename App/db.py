@@ -55,6 +55,22 @@ def get_post_by_id(id: int):
     posts = init_mongo().posts
     return posts.find_one({"post_id": id})
 
+def get_all_posts():
+    posts = init_mongo().posts
+    return posts.find({})
+
+# sorts the post and then returns the highest post_id + 1 
+# return 0 if this will be first post in the database
+def get_next_post_id():
+    all_posts= get_all_posts()
+    
+    if(all_posts):
+        all_posts = all_posts.sort("post_id", -1)
+        highestId = (all_posts[0])["post_id"]
+        return int(highestId) + 1
+    
+    return 0
+
 # returns a tuple of (token, error). token is None on error
 # this is the unencrypted token so the cookie can be set
 def register(username: str, password: str):
@@ -105,3 +121,20 @@ def login(username: str, password: str):
         return (token, None)
     
     return (None, "No such user")
+
+def create_posts(username: str, title: str, description: str):
+    
+    if(not username or not title or not description):
+        return None
+    
+    posts = init_mongo().posts
+    
+    postId = get_next_post_id()
+    postInsertion = posts.insert_one({
+        "username": username,
+        "title": title,
+        "description": description,
+        "post_id": int(postId) 
+    })
+    # continue
+    return (postInsertion)
