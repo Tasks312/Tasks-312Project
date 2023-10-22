@@ -47,6 +47,14 @@ def get_user_by_token(request):
 def is_user_authenticated(request):
     return get_user_by_request(request) != None
 
+# returns a cursor for a post with the id
+def get_post_by_id(id: int):
+    if (not id):
+        return None
+
+    posts = init_mongo().posts
+    return posts.find_one({"post_id": id})
+
 # returns a tuple of (token, error). token is None on error
 # this is the unencrypted token so the cookie can be set
 def register(username: str, password: str):

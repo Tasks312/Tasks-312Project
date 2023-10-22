@@ -5,6 +5,15 @@ import os
 import App.db as db
 import App.bcrypt as bcrypt
 
+def strToInt(string: str):
+    if (string is None):
+        return None
+    
+    try:
+        return int(string)
+    except ValueError:
+        return None
+
 def create_app(test_config = None):
     app = Flask(__name__)
     app.config["MONGO_URI"] = "mongodb://mongo:27017/database"
@@ -54,6 +63,40 @@ def create_app(test_config = None):
         response.status_code = 301
         response.set_cookie("authtoken", token, max_age=36000, httponly = True)
         return response
+
+    @app.route("/like-post/<postID>", methods=["POST"])
+    def like(postID = None):
+        user = db.get_user_by_request(request)
+        if (not user):
+            response = make_response("Must be logged in to like posts.")
+            response.status_code = 403
+            return response
+
+        post = db.get_post_by_id(strToInt(postID))
+        if (not post):
+            response = make_response("Post does not exist.")
+            response.status_code = 404
+            return response
+
+        # @TODO implement
+        pass
+
+    @app.route("/unlike-post/<postID>", methods=["POST"])
+    def unlike(postID = None):
+        user = db.get_user_by_request(request)
+        if (not user):
+            response = make_response("Must be logged in to unlike posts.")
+            response.status_code = 403
+            return response
+
+        post = db.get_post_by_id(strToInt(postID))
+        if (not post):
+            response = make_response("Post does not exist.")
+            response.status_code = 404
+            return response
+
+        # @TODO implement
+        pass
 
     @app.after_request
     def set_nosniff(response):
