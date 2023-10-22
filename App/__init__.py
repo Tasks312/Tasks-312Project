@@ -69,7 +69,7 @@ def create_app(test_config = None):
         title = request.form["title"]
         description = request.form["description"]
         
-        user = db.get_user_by_token(request=request)
+        user = db.get_user_by_request(request)
         if not user:
             response = make_response(redirect("/"), "unauthorized")
             response.status_code = 401

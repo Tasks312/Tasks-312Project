@@ -4,6 +4,8 @@ from flask import current_app, g
 
 import App.bcrypt as bcrypt
 
+next_post_id = -1
+
 def init_mongo():
     if ('mongo' not in g):
         g.mongo = PyMongo(current_app)
@@ -16,32 +18,22 @@ def get_user_by_name(username: str):
 
     return users.find_one({"username": username})
 
+# returns a cursor for a user with that token (or None)
+def get_user_by_token(token: str):
+    users = init_mongo().users
+
+    return users.find_one({"authtoken": bcrypt.hash_token(token)}) 
+
+
 # returns a cursor for a user with the auth token from the request cookie (or None)
 def get_user_by_request(request):
-    username = request.cookies.get("username")
-    if (not username):
-        return None
-    
-    puser = get_user_by_name(username)
-    if (not puser):
-        return None
-    
     token = request.cookies.get("authtoken")
     if (not token):
         return None
-    
-    if (bcrypt.hash_compare(puser["authtoken"], token)):
-        return puser
-    
-    return None
 
-def get_user_by_token(request):
-    users = init_mongo().users
-    token = request.cookies.get("authtoken")
-    if(token):
-        return users.find_one({"authtoken": bcrypt.hash_token(token)}) 
-    
-    return None
+    return get_user_by_token(token)
+
+
 
 # returns true if request is from an authenticated user
 def is_user_authenticated(request):
@@ -62,14 +54,17 @@ def get_all_posts():
 # sorts the post and then returns the highest post_id + 1 
 # return 0 if this will be first post in the database
 def get_next_post_id():
-    all_posts= get_all_posts()
-    
-    if(all_posts):
-        all_posts = all_posts.sort("post_id", -1)
-        highestId = (all_posts[0])["post_id"]
-        return int(highestId) + 1
-    
-    return 0
+    global next_post_id
+
+    if (next_post_id == -1):
+        all_posts = get_all_posts()
+
+        if(all_posts):
+            all_posts = all_posts.sort("post_id", -1)
+            highestId = (all_posts[0])["post_id"]
+            next_post_id = int(highestId)
+
+    return next_post_id + 1
 
 # returns a tuple of (token, error). token is None on error
 # this is the unencrypted token so the cookie can be set
@@ -122,7 +117,7 @@ def login(username: str, password: str):
     
     return (None, "No such user")
 
-def create_posts(username: str, title: str, description: str):
+def create_post(username: str, title: str, description: str):
     
     if(not username or not title or not description):
         return None
