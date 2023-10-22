@@ -16,19 +16,24 @@ def get_user_by_name(username: str):
 
     return users.find_one({"username": username})
 
-# returns a cursor for a user with that raw token (or None)
-def get_user_by_token(token: str):
-    users = init_mongo().users
-
-    return users.find_one({"authtoken": bcrypt.hash(token)}) 
-
 # returns a cursor for a user with the auth token from the request cookie (or None)
 def get_user_by_request(request):
+    username = request.cookies.get("username")
+    if (not username):
+        return None
+    
+    puser = get_user_by_name(username)
+    if (not puser):
+        return None
+    
     token = request.cookies.get("authtoken")
     if (not token):
         return None
     
-    return get_user_by_token(token)
+    if (bcrypt.hash_compare(puser["authtoken"], token)):
+        return puser
+    
+    return None
 
 # returns true if request is from an authenticated user
 def is_user_authenticated(request):
@@ -81,4 +86,6 @@ def login(username: str, password: str):
             "authtoken" : bcrypt.hash(token)
         }})
 
-        return token, None
+        return (token, None)
+    
+    return (None, "No such user")

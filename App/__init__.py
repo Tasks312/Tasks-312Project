@@ -3,6 +3,7 @@ from flask import Flask, redirect, request, make_response, render_template
 import os
 
 import App.db as db
+import App.bcrypt as bcrypt
 
 def create_app(test_config = None):
     app = Flask(__name__)
@@ -48,6 +49,7 @@ def create_app(test_config = None):
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         response.set_cookie("authtoken", token, max_age=36000, httponly = True)
+        response.set_cookie("username", bcrypt.escape_html(username))
         return response
 
     @app.after_request
