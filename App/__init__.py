@@ -25,7 +25,7 @@ def create_app(test_config = None):
 
     @app.route("/")
     def index():
-        user = db.get_user_by_token(request=request)
+        user = db.get_user_by_request(request)
         if(user):
             return render_template("index.html", logged_username= user["username"])
 
