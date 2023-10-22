@@ -16,6 +16,10 @@ def create_app(test_config = None):
 
     @app.route("/")
     def index():
+        user = db.get_user_by_token(request=request)
+        if(user):
+            return render_template("index.html", logged_username= user["username"])
+
         return render_template("index.html")
 
     @app.route("/register", methods=["POST"])
@@ -49,7 +53,6 @@ def create_app(test_config = None):
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         response.set_cookie("authtoken", token, max_age=36000, httponly = True)
-        response.set_cookie("username", bcrypt.escape_html(username))
         return response
 
     @app.after_request

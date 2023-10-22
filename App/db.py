@@ -35,6 +35,14 @@ def get_user_by_request(request):
     
     return None
 
+def get_user_by_token(request):
+    users = init_mongo().users
+    token = request.cookies.get("authtoken")
+    if(token):
+        return users.find_one({"authtoken": bcrypt.hash_token(token)}) 
+    
+    return None
+
 # returns true if request is from an authenticated user
 def is_user_authenticated(request):
     return get_user_by_request(request) != None
@@ -83,7 +91,7 @@ def login(username: str, password: str):
         {"$set":{
             "username": username,
             "password": bcrypt.hash(password),
-            "authtoken" : bcrypt.hash(token)
+            "authtoken" : bcrypt.hash_token(token)
         }})
 
         return (token, None)

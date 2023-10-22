@@ -1,3 +1,4 @@
+import hashlib
 import secrets
 from flask_bcrypt import Bcrypt
 
@@ -17,6 +18,9 @@ def hash_compare(hash, rawstring: str):
 
 def gen_token():
     return secrets.token_hex(16)
+
+def hash_token(token: str):
+    return hashlib.sha256(token.encode()).hexdigest()
 
 def escape_html(string: str):
     escaped = ""

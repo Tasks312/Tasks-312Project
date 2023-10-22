@@ -18,7 +18,11 @@
         <img src="\static\images\TASKSFavicon.png" alt="It's A favicon" class="my_image"/></div>
     <div>
         <p id="paragraph">
+            {% if logged_username %}
+            Hi, Welcome {{ logged_username }} 🙂
+            {% else %}
             Hi, Welcome to TASKS HOMEPAGE🙂
+            {% endif%}
         </p>
     </div>
 </div>
