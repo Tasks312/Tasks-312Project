@@ -39,7 +39,7 @@ def is_user_authenticated(request):
 
 # returns a cursor for a post with the id
 def get_post_by_id(id: int):
-    if (not id):
+    if (id == None):
         return None
 
     posts = init_mongo().posts

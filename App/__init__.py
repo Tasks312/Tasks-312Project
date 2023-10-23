@@ -11,7 +11,7 @@ def strToInt(string: str):
     
     try:
         return int(string)
-    except ValueError:
+    except:
         return None
 
 def create_app(test_config = None):
@@ -107,6 +107,7 @@ def create_app(test_config = None):
             return response
 
         post = db.get_post_by_id(strToInt(postID))
+        print(strToInt(post), flush=True)
         if (not post):
             response = make_response("Post does not exist.")
             response.status_code = 404
@@ -149,7 +150,7 @@ def create_app(test_config = None):
         posts = db.init_mongo().posts
         posts.update_one({"post_id": strToInt(postID)}, {"$set": {"like_count": like_count, "liked_by": liked_by_updated}})
 
-        return jsonify({"message": "Post liked successfully", "likes": like_count + 1}), 200
+        return jsonify({"message": "Post unliked successfully", "likes": like_count + 1}), 200
 
     @app.after_request
     def set_nosniff(response):
