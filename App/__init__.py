@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, make_response, render_template, jsonify
+from flask import Flask, redirect, request, make_response, render_template
 
 import os
 
@@ -79,24 +79,8 @@ def create_app(test_config = None):
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         return response
-    
-    @app.route("/post-history")
-    def postHistory():
-        posts = db.get_all_posts()
 
-        postJSON = []
-
-        for post in posts:
-            postJSON.append({
-                "username": post["username"],
-                "title": post["title"],
-                "description": post["description"],
-                "post_id": post["post_id"]
-            })
-            
-        return jsonify(postJSON)
-
-
+        
     @app.route("/like-post/<postID>", methods=["POST"])
     def like(postID = None):
         user = db.get_user_by_request(request)
