@@ -65,7 +65,8 @@ def get_next_post_id():
                 highestId = post["post_id"]
                 next_post_id = int(highestId)
 
-    return next_post_id + 1
+    next_post_id += 1
+    return next_post_id
 
 # returns a tuple of (token, error). token is None on error
 # this is the unencrypted token so the cookie can be set
@@ -135,12 +136,3 @@ def create_post(username: str, title: str, description: str):
     })
     # continue
     return (postInsertion)
-
-def get_post_by_id(post_id):
-    posts = init_mongo().posts
-    return posts.find_one({"post_id": int(post_id)})
-
-# Add methods to update the post's liked_by field
-def update_post_likes(post_id, liked_by):
-    posts = init_mongo().posts
-    posts.update_one({"post_id": int(post_id)}, {"$set": {"liked_by": liked_by}})
