@@ -26,12 +26,14 @@ function postHTML(postJSON) {
     const title = postJSON.title;
     const description = postJSON.description;
     const post_id = postJSON.post_id;
+    const like_count = postJSON.like_count
 
     let postHTML = "<div class='post'>";
     postHTML += "<p><b><u>User:</u></b> " + username + " <b><u> Title: </u></b> " + title + "</p>"
     postHTML += "<p><b>Description: </b>" + description + "</p>"
-    postHTML += "<br><button onclick='likePost(\"" + post_id + "\")'>Like</button> ";
-    postHTML += "<br><button onclick='unlikePost(\"" + post_id + "\")'>Unlike</button> ";
+    postHTML += "<p><b>Like Count:</b> " + like_count + " </p>"
+    postHTML += "<button onclick='likePost(\"" + post_id + "\")'>Like</button> ";
+    postHTML += "<button onclick='unlikePost(\"" + post_id + "\")'>Unlike</button> ";
     postHTML += "</div>";
     return postHTML;
 }

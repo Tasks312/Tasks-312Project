@@ -130,7 +130,8 @@ def create_post(username: str, title: str, description: str):
         "username": username,
         "title": title,
         "description": description,
-        "post_id": int(postId) 
+        "post_id": int(postId),
+        "like_count": 0
     })
     # continue
     return (postInsertion)

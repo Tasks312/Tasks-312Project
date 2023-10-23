@@ -91,7 +91,8 @@ def create_app(test_config = None):
                 "username": post["username"],
                 "title": post["title"],
                 "description": post["description"],
-                "post_id": post["post_id"]
+                "post_id": post["post_id"],
+                "like_count": post["like_count"]
             })
             
         return jsonify(postJSON)
