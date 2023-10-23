@@ -24,6 +24,7 @@ def get_user_by_token(token: str):
 
     return users.find_one({"authtoken": bcrypt.hash_token(token)}) 
 
+
 # returns a cursor for a user with the auth token from the request cookie (or None)
 def get_user_by_request(request):
     token = request.cookies.get("authtoken")
@@ -32,10 +33,11 @@ def get_user_by_request(request):
 
     return get_user_by_token(token)
 
+
+
 # returns true if request is from an authenticated user
 def is_user_authenticated(request):
     return get_user_by_request(request) != None
-
 
 # returns a cursor for a post with the id
 def get_post_by_id(id: int):
@@ -47,7 +49,7 @@ def get_post_by_id(id: int):
 
 def get_all_posts():
     posts = init_mongo().posts
-    return posts.find()
+    return posts.find({})
 
 # sorts the post and then returns the highest post_id + 1 
 # return 0 if this will be first post in the database
@@ -58,12 +60,9 @@ def get_next_post_id():
         all_posts = get_all_posts()
 
         if(all_posts):
-            high_post = all_posts.sort("post_id", -1).limit(1)
-
-            # why a for loop for a list with 1 entry? Because MongoDB and Python...
-            for post in high_post:
-                highestId = post["post_id"]
-                next_post_id = int(highestId)
+            all_posts = all_posts.sort("post_id", -1)
+            highestId = (all_posts[0])["post_id"]
+            next_post_id = int(highestId)
 
     return next_post_id + 1
 

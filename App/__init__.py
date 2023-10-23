@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, make_response, render_template, jsonify
+from flask import Flask, redirect, request, make_response, render_template
 
 import os
 
@@ -66,8 +66,8 @@ def create_app(test_config = None):
 
     @app.route("/create_post", methods=["POST"])
     def createPost():
-        title = bcrypt.escape_html(request.form["title"])
-        description = bcrypt.escape_html(request.form["description"])
+        title = request.form["title"]
+        description = request.form["description"]
         
         user = db.get_user_by_request(request)
         if not user:
@@ -75,28 +75,12 @@ def create_app(test_config = None):
             response.status_code = 401
             return response
 
-        postInsert = db.create_post(user["username"], title, description)
+        postInsert = db.create_post(username=user["username"], title=title, description=description)
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         return response
-    
-    @app.route("/post-history")
-    def postHistory():
-        posts = db.get_all_posts()
 
-        postJSON = []
-
-        for post in posts:
-            postJSON.append({
-                "username": post["username"],
-                "title": post["title"],
-                "description": post["description"],
-                "post_id": post["post_id"]
-            })
-            
-        return jsonify(postJSON)
-
-
+        
     @app.route("/like-post/<postID>", methods=["POST"])
     def like(postID = None):
         user = db.get_user_by_request(request)
