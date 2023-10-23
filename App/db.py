@@ -135,3 +135,12 @@ def create_post(username: str, title: str, description: str):
     })
     # continue
     return (postInsertion)
+
+def get_post_by_id(post_id):
+    posts = init_mongo().posts
+    return posts.find_one({"post_id": int(post_id)})
+
+# Add methods to update the post's liked_by field
+def update_post_likes(post_id, liked_by):
+    posts = init_mongo().posts
+    posts.update_one({"post_id": int(post_id)}, {"$set": {"liked_by": liked_by}})
