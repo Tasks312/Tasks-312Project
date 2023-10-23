@@ -66,8 +66,8 @@ def create_app(test_config = None):
 
     @app.route("/create_post", methods=["POST"])
     def createPost():
-        title = bcrypt.escape_html(request.form["title"])
-        description = bcrypt.escape_html(request.form["description"])
+        title = request.form["title"]
+        description = request.form["description"]
         
         user = db.get_user_by_request(request)
         if not user:
@@ -75,7 +75,7 @@ def create_app(test_config = None):
             response.status_code = 401
             return response
 
-        postInsert = db.create_post(user["username"], title, description)
+        postInsert = db.create_post(username=user["username"], title=title, description=description)
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         return response
