@@ -111,9 +111,18 @@ def create_app(test_config = None):
             response = make_response("Post does not exist.")
             response.status_code = 404
             return response
+        
+        username = user["username"]
+        if username in post.get("liked_by", []):
+            return jsonify({"error": "User has already liked this post"}), 400
+        
+        liked_by_updated = post.get("liked_by", []) + [username]
+        like_count = post["like_count"] + 1
 
-        # @TODO implement
-        pass
+        posts = db.init_mongo().posts
+        posts.update_one({"post_id": strToInt(postID)}, {"$set": {"like_count": like_count, "liked_by": liked_by_updated}})
+
+        return jsonify({"message": "Post liked successfully", "likes": like_count + 1}), 200
 
     @app.route("/unlike-post/<postID>", methods=["POST"])
     def unlike(postID = None):
@@ -129,8 +138,18 @@ def create_app(test_config = None):
             response.status_code = 404
             return response
 
-        # @TODO implement
-        pass
+        username = user["username"]
+        if username not in post.get("liked_by", []):
+            return jsonify({"error": "User has not liked this post"}), 400
+        
+        liked_by_updated = post.get("liked_by", [])
+        liked_by_updated.remove(username)
+        like_count = post["like_count"] - 1
+
+        posts = db.init_mongo().posts
+        posts.update_one({"post_id": strToInt(postID)}, {"$set": {"like_count": like_count, "liked_by": liked_by_updated}})
+
+        return jsonify({"message": "Post liked successfully", "likes": like_count + 1}), 200
 
     @app.after_request
     def set_nosniff(response):
