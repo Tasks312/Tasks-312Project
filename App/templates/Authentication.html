@@ -1,0 +1,41 @@
+<html>
+<head>
+    <title>Authentication</title>
+    <link rel="stylesheet" type="text/css" href="static/css/authentication.css"/>
+</head>
+
+<body onload="welcome();">
+
+<div class="contents">
+
+    <div class="user-list">
+        Register:
+        <form action="/register" method="post" enctype="application/x-www-form-urlencoded">
+            <label>Username:
+                <input id="reg-form-username" type="text" name="username_reg"/>
+            </label>
+            <br/>
+            <label>Password:&nbsp;
+                <input id="reg-form-pass" type="password" name="password_reg">
+            </label>
+            <input class = "submit-button" type="submit" value="Submit">
+        </form>
+
+        Login:
+        <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+            <label>Username:
+                <input id="login-form-username" type="text" name="username_login"/>
+            </label>
+            <br/>
+            <label>Password:&nbsp;
+                <input id="login-form-pass" type="password" name="password_login">
+            </label>
+            <input class = "submit-button" type="submit" value="Submit">
+        </form>
+
+    </div>
+</div>
+
+
+</body>
+</html>
