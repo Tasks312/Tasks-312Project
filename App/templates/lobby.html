@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="static/css/lobby.css">
+    <title>Connect 4 Lobby</title>
+    <link type="image/png" sizes="16x16" rel="icon" href="\static\images\TASKSFavicon.png">
+</head>
+
+<body onload="welcome();">
+    <div class="page">
+        <div class="header">
+            <h1 class="title">Welcome to the Ultimate Connect 4 Game</h1>
+        </div>
+
+        <div class="content">
+            <div class="left-side">
+                <div class="image">
+                    <img src="static/images/default.jpg" alt="Profile Picture">
+
+                  <form action="/profile-pic" id="image-form" method="post" enctype="multipart/form-data">
+                      <br/>
+                      <label for="form-file">Change profile picture: </label>
+                    <br/>
+                      <input id="form-file" type="file" name="upload">
+                      <br/>
+                      <button class="lobbyButton" type ="submit" >Upload Profile Picture</button>
+                  </form>
+                </div>
+
+                <div class="create-lobby">
+                    <h2>Create a Lobby</h2>
+                    <form action="/create-lobby" method="post" enctype="application/x-www-form-urlencoded">
+                        <div class="textbox">
+                            <input type="text" placeholder="Lobby Title" name="lobby_title">
+                        </div>
+                        <div class="textbox">
+                            <input type="text" placeholder="Description" name="lobby_description">
+                        </div>
+                        <button class="lobbyButton" type="submit">Create Lobby</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="right-side">
+                <div id="lobby-list">
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="static/js/lobbyFunction.js"></script>
+</body>
+</html>
