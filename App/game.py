@@ -1,3 +1,4 @@
+import json
 
 EMPTY = 0
 RED = 1
@@ -25,6 +26,20 @@ class Gamestate:
             return False
         
         return self.heights[x] < Gamestate.HEIGHT
+
+    # useful for saving to database
+    def as_obj(self):
+        return {
+            "player1": self.p1,
+            "player2": self.p2,
+            "turn": self.turn,
+            "over": self.over,
+            "board": self.board
+        }
+
+    # useful for sending to players
+    def as_JSON(self):
+        return json.dumps(self.as_obj())
 
     # places a thing and checks for win, returns True on successful place
     # sets self.over to True when win is detected
@@ -111,5 +126,20 @@ class Gamestate:
 
         return True
 
+# useful for loading from database
+def from_obj(obj):
+    out = Gamestate(obj["player1"], obj["player2"])
+    out.turn = obj["turn"]
+    out.over = obj["over"]
+
+    out.board = obj["board"]
+
+    for y in range(0, Gamestate.HEIGHT):
+        base = y * Gamestate.WIDTH
+        for x in range(0, Gamestate.WIDTH):
+            if (out.board[base + x] != EMPTY):
+                out.heights[x] += 1
+
+    return out
 
 
