@@ -26,7 +26,8 @@ class Gamestate:
         
         return self.heights[x] < Gamestate.HEIGHT
 
-    # places a thing and checks for win
+    # places a thing and checks for win, returns True on successful place
+    # sets self.over to True when win is detected
     def place(self, x: int):
         # this column is full! (or out of range)
         if (not self.can_place(x)):

@@ -29,7 +29,7 @@ def create_app(test_config = None):
         if(user):
             return render_template("index.html", logged_username= user["username"])
 
-        return render_template("index.html")
+        return render_template("Authentication.html")
 
     @app.route("/register", methods=["POST"])
     def register():
@@ -62,6 +62,13 @@ def create_app(test_config = None):
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         response.set_cookie("authtoken", token, max_age=36000, httponly = True)
+        return response
+
+    @app.route("/logout", methods=["POST"])
+    def logout():
+        response = make_response(redirect("/"), "OK")
+        response.status_code = 301
+        response.set_cookie("authtoken", "_logged_out_", max_age=1, httponly = True)
         return response
 
     @app.route("/create_post", methods=["POST"])
