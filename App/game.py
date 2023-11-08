@@ -10,7 +10,9 @@ class Gamestate:
 
     SPOTS = WIDTH * HEIGHT
 
-    def __init__(self, p1: str, p2: str):
+    def __init__(self, id:int, p1: str, p2: str):
+        self.id = id
+
         self.p1 = p1
         self.p2 = p2
         
@@ -48,6 +50,7 @@ class Gamestate:
     # useful for saving to database
     def as_obj(self):
         return {
+            "game_id": self.id,
             "player1": self.p1,
             "player2": self.p2,
             "turn": self.turn,
@@ -176,7 +179,7 @@ class Gamestate:
 
 # useful for loading from database
 def from_obj(obj):
-    out = Gamestate(obj["player1"], obj["player2"])
+    out = Gamestate(obj["game_id"], obj["player1"], obj["player2"])
     out.turn = obj["turn"]
 
     out.winner = obj["winner"]
