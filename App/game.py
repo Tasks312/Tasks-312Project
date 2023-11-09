@@ -10,7 +10,7 @@ class Gamestate:
 
     SPOTS = WIDTH * HEIGHT
 
-    def __init__(self, id:int, p1: str, p2: str):
+    def __init__(self, id: int, p1: str, p2: str):
         self.id = id
 
         self.p1 = p1
