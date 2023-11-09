@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Connect 4</title>
+     <link rel="stylesheet" type="text/css" href="static/css/gameboard.css"/>
+    <script src="static/js/boardFunction.js"></script>
+</head>
+<body>
+    <h1>Connect Four Game</h1>
+    <h2 id="winner"></h2>
+    <div class="container" id="game-container">
+        <div id="player-info">
+            <div class="player">
+                <h3>Player 1</h3>
+                <img src="defaultImg.jpg" alt="Player 1 Image" class="leftImage">
+                <button id="ready-player1" class="ready-button">Ready</button>
+            </div>
+            <div class="player">
+                <h3>Player 2</h3>
+                <img src="defaultImg.jpg" alt="Player 2 Image" class="rightimage">
+                <button id="ready-player2" class="ready-button">Ready</button>
+            </div>
+        </div>
+        <div id="board"></div>
+    </div>
+</body>
+</html>
