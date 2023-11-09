@@ -1,0 +1,125 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+}
+
+.page {
+    position: relative;
+    width: 100%;
+    background: rgb(232,236,42);
+    background: linear-gradient(129deg, rgba(232,236,42,1) 11%, rgba(239,136,136,1) 79%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header {
+    width: 100%;
+    background-color: #F9EEE3FF;
+    text-align: center;
+    padding: 20px ;
+}
+
+.title {
+    font-family: 'Bangers', cursive;
+    font-size: 32px;
+    color: #171A1F;
+    margin: 0;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Right side for lobby list */
+.right-side {
+    flex: 1;
+    /* background-color: #7ccbf0; */
+    padding-left: 20px;
+}
+#lobby-list {
+    height: 90%;
+    /*width: 70%;*/
+    /*background-color: aqua;*/
+    /*padding: 20px;*/
+    overflow: scroll;
+    border-bottom: #171A1F;
+}
+.join-button {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem; 
+    padding-left: 1.5rem;
+    padding-right: 1.5rem; 
+    border-radius: 0.5rem; 
+    border-color: #2563EB; 
+    color: #ffffff; 
+    background-color: #79abfc; 
+}
+
+.join-button:hover {
+    background-color: #3081fb; 
+}
+
+/* Left side for content creation, lobby and profile picture */
+.left-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.image {
+    margin-bottom: 20px;
+}
+
+.image img {
+    width: 100px;
+    height: 100px;
+    margin-left: 30px;
+}
+
+.create-lobby {
+    margin-top: 20px;
+}
+
+.create-lobby h2 {
+    margin-bottom: 10px;
+}
+
+.textbox {
+    margin-bottom: 10px;
+}
+
+.lobbyButton {
+    width: 168px;
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+    background: #e6a0a0;
+    color: #FFFFFF;
+}
+
+.lobbyButton:hover {
+    background: #ff5c5c;
+}
+
+.lobbyButton:active {
+    background: #ee8a8a;
+}
+
+.textbox input {
+    width: 256px;
+    height: 36px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    background: #FFFFFF;
+    border-radius: 4px;
+    border: 1px solid #9095A0;
+    outline: none;
+}

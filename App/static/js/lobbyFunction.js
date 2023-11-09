@@ -6,7 +6,7 @@ function lobyHTML(lobyJSON) {
     let lobbyItemHtml =  '<div class="lobby-item">' +
         '<h3><b>Lobby Title:</b> ' + lobby_title + '</h3>' +
         '<p><b>Description:</b> ' + lobby_description + '</p>' +
-        '<button class="joinButton" onclick="joinLobby(\'' + lobby_id + '\')">Join</button>' +
+        '<button class="join-button" onclick="joinLobby(\'' + lobby_id + '\')">Join</button>' +
         '</div>';
     return lobbyItemHtml;
 }
