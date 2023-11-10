@@ -4,9 +4,11 @@ from flask import current_app, g
 
 import App.bcrypt as bcrypt
 import App.game as game
+import App.lobby as lobby
 
 next_post_id = -1
 next_game_id = -1
+next_lobby_id = -1
 
 def init_mongo():
     if ('mongo' not in g):
@@ -63,6 +65,19 @@ def get_all_games():
     games = init_mongo().games
     return games.find()
 
+# returns a cursor for a lobby with the id
+def get_lobby_by_id(id: int):
+    if (id == None):
+        return
+
+    lobbys = init_mongo().lobbys
+    return lobbys.find_one({"lobby_id", id})
+
+def get_all_lobbys():
+    lobbys = init_mongo().lobbys
+    return lobbys.find()
+
+
 # sorts the post and then returns the highest post_id + 1 
 # return 0 if this will be first post in the database
 def get_next_post_id():
@@ -95,9 +110,26 @@ def get_next_game_id():
             for game in high_game:
                 highestId = game["game_id"]
                 next_game_id = int(highestId)
-    
+
     next_game_id += 1
     return next_game_id
+
+# identical to get_next_post_id
+def get_next_lobby_id():
+    global next_lobby_id
+
+    if (next_lobby_id == -1):
+        all_lobbys = get_all_lobbys()
+
+        if (all_lobbys):
+            high_lobby = all_lobbys.sort("game_id", -1).limit(1)
+
+            for lobby in high_lobby:
+                highestId = lobby["lobby_id"]
+                next_lobby_id = int(highestId)
+    
+    next_lobby_id += 1
+    return next_lobby_id
 
 # returns a tuple of (token, error). token is None on error
 # this is the unencrypted token so the cookie can be set
@@ -195,3 +227,32 @@ def save_game(gamestate: game.Gamestate):
     games.update_one(
     {"game_id": gamestate.id},
         {"$set": gamestate.as_obj()})
+
+
+# loads a lobby from the database (if it exists)
+def load_lobby(id: int):
+    gamelobby = get_lobby_by_id(id)
+
+    if (gamelobby):
+        return lobby.from_obj(gamelobby)
+    
+    return None
+
+# saves the state of the lobby ot the database
+def save_lobby(gamelobby: lobby.Lobby):
+    lobbys = init_mongo().lobbys
+
+    lobbys.update_one(
+    {"lobby_id": gamelobby.id},
+        {"$set": gamelobby.as_obj()})
+
+# yep, it creates a lobby
+def create_lobby(title: str, desc: str):
+    lobbys = init_mongo().lobbys
+    lobbyId = get_next_lobby_id()
+
+    gamelobby = lobby.Lobby(lobbyId, title, desc)
+
+    lobbys.insert_one(gamelobby.as_obj())
+
+    return gamelobby
