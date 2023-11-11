@@ -51,7 +51,37 @@ def create_app(test_config = None):
         response = make_response(redirect("/"),"OK")
         response.status_code = 301
         return response
+    @app.route("/create-lobby", methods=["POST"])
+    def createLobby():
+        lobby_title = request.form["lobby_title"]
+        lobby_description = request.form["lobby_description"]
+        
+        err = db.create_lobby(lobby_title, lobby_description)
+        
+        if (err):
+            response = make_response(redirect("/"), err)
+            response.status_code = 400
+            return response
+
+        response = make_response(redirect("/"),"OK")
+        response.status_code = 301
+        return response
     
+    @app.route("/lobby-list", methods=["GET"])
+    def lobby_list():
+        lobbys = db.get_all_lobbys()
+
+        lobbyJSON = []
+
+        for lobby in lobbys:
+            lobbyJSON.append({
+                "lobby_id": lobby["lobby_id"],
+                "lobby_title": lobby["lobby_title"],
+                "lobby_description": lobby["lobby_description"],
+            })
+            
+        return jsonify(lobbyJSON)
+
     @app.route("/register", methods=["POST"])
     def register():
         username = request.form["username_reg"]

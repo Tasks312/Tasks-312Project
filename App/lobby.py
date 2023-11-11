@@ -12,7 +12,7 @@ class Lobby:
 
     def as_obj(self):
         return {
-            "id": self.id,
+            "lobby_id": self.id,
             "lobby_title": self.title,
             "lobby_description": self.desc,
             "users": self.users

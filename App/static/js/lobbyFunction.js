@@ -1,7 +1,7 @@
-function lobyHTML(lobyJSON) {
-    const lobby_title = lobyJSON.lobby_title;
-    const lobby_description = lobyJSON.lobby_description;
-    const lobby_id = lobyJSON.id;
+function lobbyHTML(lobbyJSON) {
+    const lobby_title = lobbyJSON.lobby_title;
+    const lobby_description = lobbyJSON.lobby_description;
+    const lobby_id = lobbyJSON.lobby_id;
     // For later implement a status label, Open or Full(When 2 players in)
     let lobbyItemHtml =  '<div class="lobby-item">' +
         '<h3><b>Lobby Title:</b> ' + lobby_title + '</h3>' +
@@ -27,9 +27,9 @@ function clearLobbyList() {
     lobbyList.innerHTML = "";
 }
 
-function addLobbyToList(lobyJSON) {
+function addLobbyToList(lobbyJSON) {
     const lobbyList = document.getElementById("lobby-list");
-    lobbyList.innerHTML += lobyHTML(lobyJSON);
+    lobbyList.innerHTML += lobbyHTML(lobbyJSON);
 }
 
 function updateLobbyList() {

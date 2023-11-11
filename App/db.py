@@ -123,7 +123,7 @@ def get_next_lobby_id():
         all_lobbys = get_all_lobbys()
 
         if (all_lobbys):
-            high_lobby = all_lobbys.sort("game_id", -1).limit(1)
+            high_lobby = all_lobbys.sort("lobby_id", -1).limit(1)
 
             for lobby in high_lobby:
                 highestId = lobby["lobby_id"]
@@ -296,3 +296,23 @@ def insert_profile_picture(username: str, request):
     }})
     
     return err
+
+def create_lobby(lobby_title, lobby_description):
+    if (not lobby_title):
+        return ("No Lobby Title")
+    elif (not lobby_description):
+        return ("No Lobby Description")
+    
+    lobby_id = get_next_lobby_id()
+    new_lobby = lobby.Lobby(lobby_id, lobby_title, lobby_description)
+    lobbys = init_mongo().lobbys
+    
+    if (lobbys.find_one({"lobby_title": lobby_title})):
+        return "Lobby already in use!"
+    
+    lobbys.insert_one(new_lobby.as_obj())
+
+    return None
+    
+    
+    
