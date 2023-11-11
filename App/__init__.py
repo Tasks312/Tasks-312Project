@@ -51,10 +51,11 @@ def create_app(test_config = None):
         response = make_response(redirect("/"),"OK")
         response.status_code = 301
         return response
+    
     @app.route("/create-lobby", methods=["POST"])
     def createLobby():
-        lobby_title = request.form["lobby_title"]
-        lobby_description = request.form["lobby_description"]
+        lobby_title = bcrypt.escape_html(request.form["lobby_title"])
+        lobby_description = bcrypt.escape_html(request.form["lobby_description"])
         
         err = db.create_lobby(lobby_title, lobby_description)
         
