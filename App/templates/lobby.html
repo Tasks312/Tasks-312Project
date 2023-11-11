@@ -15,8 +15,11 @@
         <div class="content">
             <div class="left-side">
                 <div class="image">
-                    <img src="static/images/default.jpg" alt="Profile Picture">
-
+                    {% if profile_picture %}
+                    <img src={{profile_picture}} alt="Users Uploaded Profile Picture">
+                    {% else %}
+                    <img src="static/images/defaultImg.jpg" alt="Profile Picture">
+                    {% endif%}
                   <form action="/profile-pic" id="image-form" method="post" enctype="multipart/form-data">
                       <br/>
                       <label for="form-file">Change profile picture: </label>

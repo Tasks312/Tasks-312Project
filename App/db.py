@@ -9,6 +9,7 @@ import App.lobby as lobby
 next_post_id = -1
 next_game_id = -1
 next_lobby_id = -1
+next_image_id = -1
 
 def init_mongo():
     if ('mongo' not in g):
@@ -256,3 +257,42 @@ def create_lobby(title: str, desc: str):
     lobbys.insert_one(gamelobby.as_obj())
 
     return gamelobby
+
+def get_all_users():
+    users = init_mongo().users
+    return users.find()
+
+def get_next_image_id():
+    global next_image_id
+    if (next_image_id == -1):
+        all_users = get_all_users()
+        if (all_users):
+            high_image = all_users.sort("image_id", -1).limit(1)
+            for image in high_image:
+                if "image_id" in image:
+                    highestId = image["image_id"]
+                    next_image_id = int(highestId)
+    
+    next_image_id += 1
+    return next_image_id
+
+def insert_profile_picture(username: str, request):
+    err = None
+    file = request.files['upload']
+    if file.filename == '':
+        err = ("No file uploaded")
+        return err
+    
+    users = init_mongo().users
+    image_id = get_next_image_id()
+    
+    file_path = "App/static/images/userimage" + str(image_id) + ".jpg"
+    file.save(file_path)
+    
+    users.update_one({"username": username},
+    {"$set":{
+        "image_id": image_id,
+        "image_path": "/static/images/userimage" + str(image_id) +".jpg"
+    }})
+    
+    return err

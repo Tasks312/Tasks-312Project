@@ -27,10 +27,31 @@ def create_app(test_config = None):
     def index():
         user = db.get_user_by_request(request)
         if(user):
-            return render_template("index.html", logged_username= user["username"])
+            if("image_id" in user):
+                return render_template("lobby.html", logged_username= user["username"], profile_picture = user["image_path"])
+
+            return render_template("lobby.html", logged_username= user["username"])
 
         return render_template("Authentication.html")
 
+    @app.route("/profile-pic", methods=["POST"])
+    def uploadProfilePic():
+        user = db.get_user_by_request(request)
+        if not user:
+            response = make_response(redirect("/"), "unauthorized")
+            response.status_code = 401
+            return response
+
+        err = db.insert_profile_picture(user["username"], request)
+        if (err):
+            response = make_response(redirect("/"), err)
+            response.status_code = 400
+            return response
+        
+        response = make_response(redirect("/"),"OK")
+        response.status_code = 301
+        return response
+    
     @app.route("/register", methods=["POST"])
     def register():
         username = request.form["username_reg"]
