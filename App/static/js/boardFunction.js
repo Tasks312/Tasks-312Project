@@ -5,10 +5,36 @@ var totalColumns = 7;
 var readyPlayer1 = false;
 var readyPlayer2= false;
 
+
+const ws = false;
+let socket = null;
+
 window.onload = function () {
     boardDisplay();
-    checkReady();
+    
 };
+
+
+
+
+function initWS() {
+    // Establish a WebSocket connection with the server
+    socket = new WebSocket('ws://' + window.location.host + '/websocket');
+
+   
+    socket.onmessage = function (ws_message) {
+        const message = JSON.parse(ws_message.data);
+        const messageType = message.messageType
+        if(messageType === 'chatMessage'){
+            addMessageToChat(message);
+        }else{
+            // send message to WebRTC
+            processMessageAsWebRTC(message, messageType);
+        }
+    }
+};
+
+
 
 function split() {
     return this.id.split("-");  
@@ -30,29 +56,37 @@ function boardDisplay() {
 
 
 
-function checkReady() {
-    let Button1 = document.getElementById("ready-player1");
-    let Button2 = document.getElementById("ready-player2");
 
-    Button1.addEventListener("click", function () {
-        readyPlayer1 = true;
-        startCheck();
-    });
 
-    Button2.addEventListener("click", function () {
-        readyPlayer2 = true;
-        startCheck();
-    });
-};
 
-function startCheck() {
-    if (readyPlayer1 == true) {
-        if(readyPlayer2 == true) {
-            startGame();
+function insertPieceReq(column,lobbyID){
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState === 4){
+            
+            if(this.status === 200 )
+            {
+                console.log('Piece was inserted successfully');
+            }
+            else{
+                console.error('Piece could not be inserted successfully');
+            }
+        }
     }
-}
 };
 
-function startGame() {
-    
+const data = {
+    lobbyID: lobbyID,
+    column: column,
 };
+
+request.open('POST', "/insert-piece");
+request.setRequestHeader('Content-Type', "application/json;charset=UTF-8");
+request.send(JSON.stringify(data));
+
+
+
+function welcome() {
+    insertPieceReq();
+    setInterval(insertPieceReq, 2000);
+}
