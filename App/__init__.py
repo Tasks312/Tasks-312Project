@@ -82,6 +82,79 @@ def create_app(test_config = None):
             })
             
         return jsonify(lobbyJSON)
+    
+    @app.route("/board/<game_id>")
+    def board(game_id = None):
+        game_id = strToInt(game_id)
+        user = db.get_user_by_request(request)
+        if not user:
+            response = make_response(redirect("/"), "unauthorized")
+            response.status_code = 401
+            return response
+        game = db.load_game(game_id)
+        
+        if not game:
+            response = make_response(redirect("/"), "Game Not Found")
+            response.status_code = 404
+            return response
+        
+        return render_template("board.html")
+        
+        
+    @app.route("/join-game/<game_id>", methods=["GET", "POST"])
+    def join_game(game_id = None):
+        game_id = strToInt(game_id)
+        user = db.get_user_by_request(request)
+        if not user:
+            response = make_response(redirect("/"), "unauthorized")
+            response.status_code = 401
+            return response
+        
+        game = db.load_game(game_id)
+        if game:
+            # That means player 1 is already in game, so
+            game.p2 = user["username"]
+            db.save_game(game)
+            return redirect("/")
+        
+        game = db.create_game(player1=user["username"], player2= None)
+        db.save_game(game)
+        response = make_response(redirect(f"/board/{game.id}"), "Joining game, viewing board")
+        response.status_code = 301
+        return response
+        
+    @app.route("/join-lobby/<lobby_id>", methods=["POST"])
+    def join_lobby(lobby_id = None ):
+        lobby_id = strToInt(lobby_id)
+        user = db.get_user_by_request(request)
+        if not user:
+            response = make_response(redirect("/"), "unauthorized")
+            response.status_code = 401
+            return response
+        lobby = db.load_lobby(lobby_id)
+        
+        if not lobby:
+            response = make_response(redirect("/"), "lobby does not exist")
+            response.status_code = 401
+            return response
+        
+        if user["username"] in lobby.users:
+            response = make_response(redirect("/"), "already in the game")
+            response.status_code = 401
+            return response
+        
+        if len(lobby.users) >= 2:
+            response = make_response(redirect("/"), "Cannot join a full lobby")
+            response.status_code = 401
+            return response
+        
+        lobby.users.append(user["username"])
+        db.save_lobby(lobby)
+        
+        response = make_response(redirect("/join-game/"+ str(lobby_id)), "OK")
+        response.status_code = 301
+        return response
+        # Redirect to game, and create game etc.
 
     @app.route("/register", methods=["POST"])
     def register():
