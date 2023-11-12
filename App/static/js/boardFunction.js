@@ -56,9 +56,7 @@ function initWS() {
 
 
 
-function split() {
-    return this.id.split("-");  
-};
+
 
 function boardDisplay() {
 
@@ -111,7 +109,7 @@ function display_winner(currentPlayer){
     let the_id = document.getElementById("winner");
     let winner_statement = '<h1>${currentPlayer} is the winner!!!</h1>';
     the_id.innerHTML = winner_statement
-}
+};
 
 
 
@@ -119,4 +117,4 @@ function display_winner(currentPlayer){
 function welcome() {
     insertPieceReq();
     setInterval(insertPieceReq, 2000);
-}
+};
