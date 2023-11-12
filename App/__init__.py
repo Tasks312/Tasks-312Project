@@ -98,30 +98,7 @@ def create_app(test_config = None):
             response.status_code = 404
             return response
         
-        return render_template("board.html")
-        
-        
-    @app.route("/join-game/<game_id>", methods=["GET", "POST"])
-    def join_game(game_id = None):
-        game_id = strToInt(game_id)
-        user = db.get_user_by_request(request)
-        if not user:
-            response = make_response(redirect("/"), "unauthorized")
-            response.status_code = 401
-            return response
-        
-        game = db.load_game(game_id)
-        if game:
-            # That means player 1 is already in game, so
-            game.p2 = user["username"]
-            db.save_game(game)
-            return redirect("/")
-        
-        game = db.create_game(player1=user["username"], player2= None)
-        db.save_game(game)
-        response = make_response(redirect(f"/board/{game.id}"), "Joining game, viewing board")
-        response.status_code = 301
-        return response
+        return render_template("board.html") # Later can implement passing all users name, can pass users profile pictures etc
         
     @app.route("/join-lobby/<lobby_id>", methods=["POST"])
     def join_lobby(lobby_id = None ):
@@ -151,10 +128,20 @@ def create_app(test_config = None):
         lobby.users.append(user["username"])
         db.save_lobby(lobby)
         
-        response = make_response(redirect("/join-game/"+ str(lobby_id)), "OK")
+        game = db.load_game(lobby_id)
+        if game:
+            game.p2 = user["username"]
+            db.save_game(game)
+            response = make_response(redirect("/board/"+ str(lobby_id)), "OK")
+            response.status_code = 301
+            return response
+
+        game = db.create_game(player1=user["username"], player2= None)
+        db.save_game(game)
+        
+        response = make_response(redirect("/board/"+ str(lobby_id)), "OK")
         response.status_code = 301
         return response
-        # Redirect to game, and create game etc.
 
     @app.route("/register", methods=["POST"])
     def register():
