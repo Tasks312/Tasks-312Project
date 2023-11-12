@@ -75,14 +75,12 @@ function insertPieceReq(column,lobbyID){
     }
 };
 
-const data = {
-    lobbyID: lobbyID,
-    column: column,
-};
+function display_winner(currentPlayer){
+    let the_id = document.getElementById("winner");
+    let winner_statement = '<h1>${currentPlayer} is the winner!!!</h1>';
+    the_id.innerHTML = winner_statement
+}
 
-request.open('POST', "/insert-piece");
-request.setRequestHeader('Content-Type', "application/json;charset=UTF-8");
-request.send(JSON.stringify(data));
 
 
 
