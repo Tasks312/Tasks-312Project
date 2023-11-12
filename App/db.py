@@ -60,7 +60,7 @@ def get_game_by_id(id: int):
         return
     
     games = init_mongo().games
-    return games.find_one({"game_id", id})
+    return games.find_one({"game_id": id})
 
 def get_all_games():
     games = init_mongo().games
@@ -72,7 +72,7 @@ def get_lobby_by_id(id: int):
         return
 
     lobbys = init_mongo().lobbys
-    return lobbys.find_one({"lobby_id", id})
+    return lobbys.find_one({"lobby_id": id})
 
 def get_all_lobbys():
     lobbys = init_mongo().lobbys
@@ -313,6 +313,3 @@ def create_lobby(lobby_title, lobby_description):
     lobbys.insert_one(new_lobby.as_obj())
 
     return None
-    
-    
-    

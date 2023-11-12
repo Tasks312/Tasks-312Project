@@ -23,7 +23,7 @@ class Lobby:
 
 
 def from_obj(obj):
-    out = Lobby(obj["id"], obj["lobby_title"], obj["lobby_description"])
+    out = Lobby(obj["lobby_id"], obj["lobby_title"], obj["lobby_description"])
     out.users = obj["users"]
 
     return out
