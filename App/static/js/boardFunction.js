@@ -106,20 +106,37 @@ function click_column(){
 
 function getColumn(event){
     const column = event.target.dataset.col;
-    insertPieceReq(column);
+    columnReq(column);
 
 };
 
 
 
-function insertPieceReq(column){
+function columnReq(column){
+
+    if(ws){
+        socket.send(JSON.stringify({'column': column}));
+    }
+
+    else{
+        
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if ((this.readyState === 4)&&(this.status === 200 )){
-                console.log('Piece was inserted successfully');
+                console.log('Column sent Successfully');
             }
             else{
-                console.error('Piece could not be inserted successfully');
+                console.error('Column was not sent  successfully');
             }
         }
+
+
+        const messageJSON = {"column": column};
+        request.open("POST", "/column-position");
+        request.send(JSON.stringify(messageJSON));
+
+
+
+    }
+        
     };
