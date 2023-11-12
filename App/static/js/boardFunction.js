@@ -2,6 +2,9 @@ var board;
 var totalRows = 6;
 var totalColumns = 7;
 
+
+
+
 var currentPlayer; // stores the color of the current player
 
 // if 1 player ==  RED
@@ -55,14 +58,14 @@ function initWS() {
 };
 
 
-
-
-
 function boardDisplay() {
 
     for (let myRow = 0; myRow < totalRows; myRow++) {
         for (let column = 0; column < totalColumns; column++) {
             let chip = document.createElement("div");
+
+            chip.dataset.col = column;//data-col attribute to the column index
+
             chip.id = myRow.toString();
             chip.id = chip.id + "-";
             chip.id = chip.id+ column.toString();
@@ -71,7 +74,6 @@ function boardDisplay() {
         }
     }
 };
-
 
 function placePiece(row,column,currentPlayer){
     const chip = document.getElementById(row + "-" + column);
@@ -89,32 +91,35 @@ function placePiece(row,column,currentPlayer){
 
 
 
-function insertPieceReq(column,lobbyID){
+
+function display_winner(currentPlayer){
+    let the_id = document.getElementById("winner");
+    let winner_statement = '<h1>${currentPlayer} is the winner!!!</h1>';
+    the_id.innerHTML = winner_statement
+}
+
+function click_column(){
+    
+    let gameBoard = document.getElementById("board")
+    gameBoard.addEventListener("click", getColumn)
+};
+
+function getColumn(event){
+    const column = event.target.dataset.col;
+    insertPieceReq(column);
+
+};
+
+
+
+function insertPieceReq(column){
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
-        if (this.readyState === 4){
-            
-            if(this.status === 200 )
-            {
+        if ((this.readyState === 4)&&(this.status === 200 )){
                 console.log('Piece was inserted successfully');
             }
             else{
                 console.error('Piece could not be inserted successfully');
             }
         }
-    }
-};
-
-function display_winner(currentPlayer){
-    let the_id = document.getElementById("winner");
-    let winner_statement = '<h1>${currentPlayer} is the winner!!!</h1>';
-    the_id.innerHTML = winner_statement
-};
-
-
-
-
-function welcome() {
-    insertPieceReq();
-    setInterval(insertPieceReq, 2000);
-};
+    };
