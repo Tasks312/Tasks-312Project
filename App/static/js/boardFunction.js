@@ -2,15 +2,17 @@ var board;
 var totalRows = 6;
 var totalColumns = 7;
 
-var readyPlayer1 = false;
-var readyPlayer2= false;
+var currentPlayer; // stores the color of the current player
 
+// if 1 player ==  RED
+//if 2 player == Yellow 
 
 const ws = false;
 let socket = null;
 
 window.onload = function () {
     boardDisplay();
+    initWS();
     
 };
 
@@ -25,13 +27,31 @@ function initWS() {
     socket.onmessage = function (ws_message) {
         const message = JSON.parse(ws_message.data);
         const messageType = message.messageType
-        if(messageType === 'chatMessage'){
-            addMessageToChat(message);
-        }else{
-            // send message to WebRTC
-            processMessageAsWebRTC(message, messageType);
+     
+        if(messageType === 'currentPlayer'){
+            currentPlayer = message.turn;
+
         }
+
+        else if(message.messageType === 'placePiece'){
+
+            const row = message.row;
+            const column = message.column;
+            placePiece(row,column,currentPlayer);
+
+        }
+
+
+        else if(message.messageType === 'gameOver'){
+            const winner = message.winner;
+            display_winner(winner,currentPlayer);
+            
+        }
+
+        else{
+            console.error('Invalid message Request received');
     }
+}
 };
 
 
@@ -52,6 +72,18 @@ function boardDisplay() {
             document.getElementById("board").append(chip);
         }
     }
+};
+
+
+function placePiece(row,column,currentPlayer){
+    const chip = document.getElementById(row + "-" + column);
+    if(currentPlayer === 'RED'){
+        chip.classList.add('red-piece')
+    }
+    else{
+        chip.classList.add('yellow-piece')
+    }
+
 };
 
 
