@@ -33,12 +33,14 @@ function initWS() {
         const messageType = message.messageType
      
         if(messageType === 'currentPlayer'){
+            //whos tyrb is it red or yellow gets sent to client 
             currentPlayer = message.turn;
 
         }
 
         else if(message.messageType === 'placePiece'){
 
+            // the row column to place piece gets sent to client as well as whether its red or yellow
             const row = message.row;
             const column = message.column;
             placePiece(row,column,currentPlayer);
@@ -47,6 +49,7 @@ function initWS() {
 
 
         else if(message.messageType === 'gameOver'){
+            // server sends to client if a winner was decided on 
             const winner = message.winner;
             display_winner(winner,currentPlayer);
             
@@ -60,7 +63,7 @@ function initWS() {
 
 
 function boardDisplay() {
-
+        // displays the board 
     for (let myRow = 0; myRow < totalRows; myRow++) {
         for (let column = 0; column < totalColumns; column++) {
             let chip = document.createElement("div");
@@ -77,6 +80,7 @@ function boardDisplay() {
 };
 
 function placePiece(row,column,currentPlayer){
+    //places the red or yellow piece in the correct row and column css has styling
     const chip = document.getElementById(row + "-" + column);
     if(currentPlayer === 'RED'){
         chip.classList.add('red-piece')
@@ -94,12 +98,15 @@ function placePiece(row,column,currentPlayer){
 
 
 function display_winner(currentPlayer){
+    //gets the winner of the game and displays winner will be either red or yellow
     let the_id = document.getElementById("winner");
     let winner_statement = '<h1>${currentPlayer} is the winner!!!</h1>';
     the_id.innerHTML = winner_statement
 }
 
 function click_column(){
+
+    // if a column is clicked this is triggered 
     
     let gameBoard = document.getElementById("board")
     gameBoard.addEventListener("click", function(event){
@@ -108,6 +115,7 @@ function click_column(){
 };
 
 function getColumn(event){
+    // get the clicked column
     const column = event.target.dataset.col;
     columnReq(column);
 
@@ -116,6 +124,7 @@ function getColumn(event){
 
 
 function columnReq(column){
+    // sends using websockets int of the column that was clicked 
 
     if(ws){
         socket.send(JSON.stringify({'column': column}));
