@@ -1,3 +1,19 @@
+const ws = true;
+let socket = null;
+
+function initWS() {
+    // Establish a WebSocket connection with the server
+    socket = new WebSocket('ws://' + window.location.host + '/websocket');
+
+    // Called whenever data is received from the server over the WebSocket connection
+    socket.onmessage = function (ws_message) {
+        const message = JSON.parse(ws_message.data);
+        const messageType = message.messageType
+        if(messageType === 'lobby_update'){
+            updateLobbyList();
+        }
+    }
+}
 function lobbyHTML(lobbyJSON) {
     const lobby_title = lobbyJSON.lobby_title;
     const lobby_description = lobbyJSON.lobby_description;
@@ -12,6 +28,9 @@ function lobbyHTML(lobbyJSON) {
 }
 
 function joinLobby(lobby_id) {
+    if (ws){
+        socket.send(JSON.stringify({'messageType': 'join_lobby', 'lobby_id': lobby_id}));
+    }
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
