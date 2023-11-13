@@ -3,7 +3,7 @@ let socket = null;
 
 function initWS() {
     // Establish a WebSocket connection with the server
-    socket = new WebSocket('ws://' + window.location.host + '/ws');
+    socket = new WebSocket('ws://' + window.location.host + '/ws/lobby');
 
     // Called whenever data is received from the server over the WebSocket connection
     socket.onmessage = function (ws_message) {
@@ -31,14 +31,16 @@ function joinLobby(lobby_id) {
     if (ws){
         socket.send(JSON.stringify({'messageType': 'join_lobby', 'lobby_id': lobby_id}));
     }
-    const request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            console.log(this.response);
+    else {
+        const request = new XMLHttpRequest();
+        request.onreadystatechange = function () {
+            if (this.readyState === 4 && this.status === 200) {
+                console.log(this.response);
+            }
         }
+        request.open("POST", "/join-lobby/" + lobby_id);
+        request.send();
     }
-    request.open("POST", "/join-lobby/" + lobby_id);
-    request.send();
 }
 
 function clearLobbyList() {
@@ -68,8 +70,11 @@ function updateLobbyList() {
 
 function welcome() {
     updateLobbyList();
-    setInterval(updateLobbyList, 2000);
+    
     if (ws) {
         initWS();
+    }
+    else {
+        setInterval(updateLobbyList, 2000);
     }
 }

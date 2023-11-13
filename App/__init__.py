@@ -1,6 +1,6 @@
 from flask import Flask, redirect, request, make_response, render_template, jsonify
 from flask_sock import Sock
-import os
+import os, threading
 
 import App.db as db
 import App.bcrypt as bcrypt
@@ -16,6 +16,17 @@ def strToInt(string: str):
     except:
         return None
 
+connections_mutex = threading.Lock()
+connections = []
+
+def broadcast(message, ignore = None):
+    global connections, connections_mutex
+
+    with connections_mutex:
+        for connection in connections:
+            if (connection != ignore):
+                connection.send(message)
+
 def create_app(test_config = None):
     app = Flask(__name__)
     app.config["MONGO_URI"] = "mongodb://mongo:27017/database"
@@ -24,17 +35,56 @@ def create_app(test_config = None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    socket.init_app(app)
+
+    def websocket_stub(ws, request):
+        global connections, connections_mutex
+
+        user = db.get_user_by_request(request)
+        if (not user):
+            try:
+                ws.close()
+            except:
+                pass
+            return None
+
+        with connections_mutex:
+            connections.append(ws)
+
+        return user
     
-    socket.init_app(app)    
-    
-    @socket.route('/ws')
+    def websocket_tail(ws):
+        global connections, connections_mutex
+
+        with connections_mutex:
+            connections.remove(ws)
+
+        try:
+            ws.close()
+        except:
+            pass
+
+    @socket.route('/ws/lobby')
     def websocket_route(ws):
-        # The ws object has the following methods:
-        # - ws.send(data)
-        # - ws.receive(timeout=None)
-        # - ws.close(reason=None, message=None)
-        return
-    
+        global connections
+
+        user = websocket_stub(ws, request)
+
+        while (user != None):
+            try:
+                data = ws.receive()
+
+                print(data, flush=True)
+
+                # @TODO EVERYTHING
+
+            except:
+                break
+
+        websocket_tail(ws)
+
+
     @app.route("/")
     def index():
         user = db.get_user_by_request(request)
@@ -241,7 +291,7 @@ def create_app(test_config = None):
             return response
 
         post = db.get_post_by_id(strToInt(postID))
-        print(strToInt(post), flush=True)
+        #print(strToInt(post), flush=True)
         if (not post):
             response = make_response("Post does not exist.")
             response.status_code = 404
