@@ -10,12 +10,13 @@ var currentPlayer; // stores the color of the current player
 // if 1 player ==  RED
 //if 2 player == Yellow 
 
-const ws = false;
+const ws = true;
 let socket = null;
 
 window.onload = function () {
     boardDisplay();
     initWS();
+    click_column();
     
 };
 
@@ -101,7 +102,9 @@ function display_winner(currentPlayer){
 function click_column(){
     
     let gameBoard = document.getElementById("board")
-    gameBoard.addEventListener("click", getColumn)
+    gameBoard.addEventListener("click", function(event){
+        getColumn(event);
+    })
 };
 
 function getColumn(event){
