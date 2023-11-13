@@ -10,7 +10,7 @@ var currentPlayer; // stores the color of the current player
 // if 1 player ==  RED
 //if 2 player == Yellow 
 
-const ws = true;
+const ws = false;
 let socket = null;
 
 window.onload = function () {
@@ -135,7 +135,7 @@ function columnReq(column){
 
 
         const messageJSON = {"column": column};
-        request.open("POST", "/column-position");
+        request.open("POST", "/column-position/" + column);
         request.send(JSON.stringify(messageJSON));
 
 
