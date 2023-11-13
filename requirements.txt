@@ -2,3 +2,4 @@ Flask
 Flask-PyMongo
 flask-bcrypt
 flask-sock
+flask-socketio

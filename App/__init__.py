@@ -1,9 +1,11 @@
 from flask import Flask, redirect, request, make_response, render_template, jsonify
-
+from flask_sock import Sock
 import os
 
 import App.db as db
 import App.bcrypt as bcrypt
+
+socket = Sock()
 
 def strToInt(string: str):
     if (string is None):
@@ -17,12 +19,22 @@ def strToInt(string: str):
 def create_app(test_config = None):
     app = Flask(__name__)
     app.config["MONGO_URI"] = "mongodb://mongo:27017/database"
-
+    app.config["SECRET_KEY"] = 'secrete' #idk will need to change this
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
+    
+    socket.init_app(app)    
+    
+    @socket.route('/ws')
+    def websocket_route(ws):
+        # The ws object has the following methods:
+        # - ws.send(data)
+        # - ws.receive(timeout=None)
+        # - ws.close(reason=None, message=None)
+        return
+    
     @app.route("/")
     def index():
         user = db.get_user_by_request(request)
@@ -83,7 +95,7 @@ def create_app(test_config = None):
             
         return jsonify(lobbyJSON)
     
-    @app.route("/board/<game_id>")
+    @app.route("/board/<game_id>", methods=["GET", "POST"])
     def board(game_id = None):
         game_id = strToInt(game_id)
         user = db.get_user_by_request(request)
@@ -139,7 +151,10 @@ def create_app(test_config = None):
         game = db.create_game(player1=user["username"], player2= None)
         db.save_game(game)
         
-        response = make_response(redirect("/board/"+ str(lobby_id)), "OK")
+        # response = make_response(redirect("/board/"+ str(lobby_id)), "OK") 
+        # response.status_code = 301
+        # return response
+        response = make_response(redirect("/board/"+str(lobby_id)),"OK")
         response.status_code = 301
         return response
 
@@ -276,4 +291,9 @@ def create_app(test_config = None):
         response.headers["X-Content-Type-Options"] = "nosniff"
         return response
     
-    return app
+    return app, socket
+
+app, socket = create_app()
+
+if __name__ == '__main__':
+    socket.run(app, debug=True)
