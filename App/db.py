@@ -149,7 +149,8 @@ def register(username: str, password: str):
 
     users.insert_one({
         "username": username,
-        "password": bcrypt.hash(password)
+        "password": bcrypt.hash(password),
+        "in_lobby": -1
     })
 
     return None
