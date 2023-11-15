@@ -278,9 +278,4 @@ def create_app(test_config = None):
         response.headers["X-Content-Type-Options"] = "nosniff"
         return response
     
-    return app, socket
-
-app, socket = create_app()
-
-if __name__ == '__main__':
-    socket.run(app, debug=True)
+    return app
