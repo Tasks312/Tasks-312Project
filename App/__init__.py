@@ -1,11 +1,8 @@
 from flask import Flask, redirect, request, make_response, render_template, jsonify
-from flask_sock import Sock
 import os, threading, json
 
 import App.db as db
 import App.bcrypt as bcrypt
-
-socket = Sock()
 
 def strToInt(string: str):
     if (string is None):
@@ -16,24 +13,6 @@ def strToInt(string: str):
     except:
         return None
 
-connections_mutex = threading.Lock()
-connections = {}
-
-def broadcast(message, ignore = None):
-    global connections, connections_mutex
-
-    with connections_mutex:
-        for username, connection in connections.items():
-            if (username != ignore):
-                connection.send(message)
-
-def user_send(message, username):
-    global connections, connections_mutex
-
-    with connections_mutex:
-        if (username in connections.keys()):
-            connections[username].send(message)
-
 def create_app(test_config = None):
     app = Flask(__name__)
     app.config["MONGO_URI"] = "mongodb://mongo:27017/database"
@@ -42,114 +21,6 @@ def create_app(test_config = None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    socket.init_app(app)
-
-    def websocket_stub(ws, request):
-        global connections, connections_mutex
-
-        user = db.get_user_by_request(request)
-        if (not user):
-            try:
-                ws.close()
-            except:
-                pass
-            return None
-
-        with connections_mutex:
-            connections[user["username"]] = ws
-
-        return user
-    
-    def websocket_tail(ws, username):
-        global connections, connections_mutex
-
-        with connections_mutex:
-            del connections[username]
-
-        try:
-            ws.close()
-        except:
-            pass
-
-    @socket.route('/ws/lobby')
-    def websocket_lobby(ws):
-        global connections
-
-        user = websocket_stub(ws, request)
-
-        username = "Guest"
-        if (user):
-            username = user["username"]
-
-        while (user != None):
-            try:
-                data = json.loads(ws.receive())
-                mtype = data["messageType"]
-
-                if mtype == "join_lobby":
-
-                    user = db.get_user_by_name(username)
-                    if (user["in_lobby"] != None or user["in_lobby"] != -1):
-                        ws.send(json.dumps({
-                            "messageType": "error",
-                            "what": "already in a lobby"
-                        }))
-                        continue
-
-                    lid = strToInt(data["lobby_id"])
-
-                    lobby = db.load_lobby(lid)
-
-                    if (not lobby):
-                        ws.send(json.dumps({
-                            "messageType": "error",
-                            "what": "lobby " + str(lid) + " does not exist"
-                        }))
-                        continue
-
-                    if (username in lobby.users):
-                        ws.send(json.dumps({
-                            "messageType": "error",
-                            "what": "already in this lobby"
-                        }))
-                        continue
-
-                    if (len(lobby.users) >= 2):
-                        ws.send(json.dumps({
-                            "messageType": "error",
-                            "what": "lobby is full"
-                        }))
-                        continue
-
-                    lobby.users.append(username)
-                    db.save_lobby(lobby)
-
-                    users = db.init_mongo().users
-                    users.update_one({"username": username},
-                    {"$set":{
-                        "in_lobby" : lid 
-                    }})
-
-                    if (len(lobby.users) >= 2):
-                        for user in lobby.users:
-                            user_send(json.dumps( {
-                                "messageType": "game_start",
-                                "id": lid
-                            }), user)                            
-                
-                else:
-                    pass
-
-                print(data, flush=True)
-
-                # @TODO EVERYTHING
-
-            except:
-                break
-
-        websocket_tail(ws, username)
-
 
     @app.route("/")
     def index():

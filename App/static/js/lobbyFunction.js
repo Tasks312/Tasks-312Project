@@ -1,19 +1,4 @@
-const ws = true;
-let socket = null;
 
-function initWS() {
-    // Establish a WebSocket connection with the server
-    socket = new WebSocket('ws://' + window.location.host + '/ws/lobby');
-
-    // Called whenever data is received from the server over the WebSocket connection
-    socket.onmessage = function (ws_message) {
-        const message = JSON.parse(ws_message.data);
-        const messageType = message.messageType
-        if(messageType === 'lobby_update'){
-            updateLobbyList();
-        }
-    }
-}
 function lobbyHTML(lobbyJSON) {
     const lobby_title = lobbyJSON.lobby_title;
     const lobby_description = lobbyJSON.lobby_description;
@@ -28,19 +13,15 @@ function lobbyHTML(lobbyJSON) {
 }
 
 function joinLobby(lobby_id) {
-    if (ws){
-        socket.send(JSON.stringify({'messageType': 'join_lobby', 'lobby_id': lobby_id}));
-    }
-    else {
-        const request = new XMLHttpRequest();
-        request.onreadystatechange = function () {
-            if (this.readyState === 4 && this.status === 200) {
-                console.log(this.response);
-            }
+
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            console.log(this.response);
         }
-        request.open("POST", "/join-lobby/" + lobby_id);
-        request.send();
     }
+    request.open("POST", "/join-lobby/" + lobby_id);
+    request.send();
 }
 
 function clearLobbyList() {
@@ -71,10 +52,5 @@ function updateLobbyList() {
 function welcome() {
     updateLobbyList();
     
-    if (ws) {
-        initWS();
-    }
-    else {
-        setInterval(updateLobbyList, 2000);
-    }
+    setInterval(updateLobbyList, 2000);
 }
