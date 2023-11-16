@@ -26,24 +26,20 @@ def create_app(test_config = None):
     def index():
         user = db.get_user_by_request(request)
         if(user):
-            profile = "static/images/defaultImg.jpg"
-            if("image_id" in user):
-                profile = user["image_path"]
+            profile = db.get_profile_picture(user)
 
             if ("lobby_id" in user):
                 game = db.load_game("lobby_id")
                 if (game and not game.is_over()):
                     other_player = game.p2 if game.p1 == user["username"] else game.p1
-                    other_user = db.get_user_by_name(other_player)
 
-                    other_profile = "static/images/defaultImg.jpg"
-                    if("image_id" in other_user):
-                        other_profile = other_user["image_path"]
+                    other_profile = db.get_profile_picture_from_username(other_player)
 
                     p1_pic = profile if game.p1 == user["username"] else other_profile
                     p2_pic = profile if game.p2 == user["username"] else other_profile
+                    winner = game.winner if game.is_over() else None
 
-                    return render_template("board.html", p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic)
+                    return render_template("board.html", p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner)
 
                 lobby = db.load_lobby("lobby_id")
                 # do something special if in a lobby?
@@ -134,7 +130,7 @@ def create_app(test_config = None):
         response.status_code = 301
         return response
     
-    @app.route("/lobby-list", methods=["GET"])
+    @app.route("/lobby-list")
     def lobby_list():
         lobbys = db.get_all_lobbys()
 
@@ -149,23 +145,26 @@ def create_app(test_config = None):
 
         return jsonify(lobbyJSON)
 
-    @app.route("/board/<game_id>", methods=["GET", "POST"])
+    @app.route("/board/<game_id>")
     def board(game_id = None):
+        # note that any user can look at a board, just not participate
+
         game_id = strToInt(game_id)
         user = db.get_user_by_request(request)
         if not user:
             response = make_response(redirect("/"), "unauthorized")
             response.status_code = 401
             return response
+        
         game = db.load_game(game_id)
-
         if not game:
             response = make_response(redirect("/"), "Game Not Found")
             response.status_code = 404
             return response
 
-        return render_template("board.html") # Later can implement passing all users name, can pass users profile pictures etc
+        return jsonify(game.as_JSON())
 
+    @app.route()
 
     @app.route("/register", methods=["POST"])
     def register():

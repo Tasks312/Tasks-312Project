@@ -320,3 +320,11 @@ def insert_profile_picture(username: str, request):
     
     return err
 
+def get_profile_picture(user):
+    if (user and "image_id" in user):
+        return user["image_id"]
+    
+    return "static/images/defaultImg.jpg"
+
+def get_profile_picture_from_username(username: str):
+    return get_profile_picture(get_user_by_name(username))
