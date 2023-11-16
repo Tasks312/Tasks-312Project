@@ -29,7 +29,7 @@ def create_app(test_config = None):
             profile = db.get_profile_picture(user)
 
             if ("lobby_id" in user):
-                game = db.load_game("lobby_id")
+                game = db.load_game(user["lobby_id"])
                 if (game and not game.is_over()):
                     other_player = game.p2 if game.p1 == user["username"] else game.p1
 
@@ -94,19 +94,19 @@ def create_app(test_config = None):
         lobby_id = strToInt(lobby_id)
         user = db.get_user_by_request(request)
         if not user:
-            response = make_response(redirect("/"), "unauthorized")
+            response = make_response("unauthorized")
             response.status_code = 401
             return response
 
         lobby = db.load_lobby(lobby_id)
 
         if not lobby:
-            response = make_response(redirect("/"), "lobby does not exist")
+            response = make_response("lobby does not exist")
             response.status_code = 401
             return response
 
         if (not db.join_lobby(user, lobby)):
-            response = make_response(redirect("/"), "cannot join game")
+            response = make_response("cannot join game")
             response.status_code = 401
             return response
 
@@ -116,22 +116,24 @@ def create_app(test_config = None):
         if game:
             game.p2 = user["username"]
             db.save_game(game)
-            response = make_response(redirect("/board/"+ str(lobby_id)), "OK")
+            response = make_response(redirect("/", "OK"))
             response.status_code = 301
             return response
 
-        game = db.create_game(player1=user["username"], player2= None)
+        game = db.create_game(lobby.users[0], lobby.users[1])
+        game.id = lobby.id
         db.save_game(game)
 
         # response = make_response(redirect("/board/"+ str(lobby_id)), "OK") 
         # response.status_code = 301
         # return response
-        response = make_response(redirect("/board/"+str(lobby_id)),"OK")
+        response = make_response(redirect("/","OK"))
         response.status_code = 301
         return response
     
     @app.route("/lobby-list")
     def lobby_list():
+
         lobbys = db.get_all_lobbys()
 
         lobbyJSON = []
@@ -162,6 +164,31 @@ def create_app(test_config = None):
             response.status_code = 404
             return response
 
+        return jsonify(game.as_JSON())
+    
+    @app.route("/column-position/<column>", methods=["POST"])
+    def placeChip(column = None):
+        column = strToInt(column)
+
+        user = db.get_user_by_request(request)
+        if not user or "lobby_id" not in user:
+            response = make_response(redirect("/"), "unauthorized")
+            response.status_code = 401
+            return response
+        
+        game = db.load_game(user["lobby_id"])
+        if not game:
+            response = make_response(redirect("/"), "Game Not Found")
+            response.status_code = 404
+            return response
+        
+
+        if (game.get_turn_player() == user["username"]):
+            err = game.try_turn(column)
+            db.save_game(game)
+
+            # @TODO something if error?
+        
         return jsonify(game.as_JSON())
 
     @app.route("/register", methods=["POST"])

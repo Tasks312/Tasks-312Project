@@ -158,7 +158,7 @@ class Gamestate:
             return "<Game Already Over"
 
         # attempt to place
-        if (not self.place(x)):
+        if (x == None or not self.place(x)):
             return "<Bad Place"
 
         # did that place win the game?

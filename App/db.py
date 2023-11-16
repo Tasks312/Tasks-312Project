@@ -322,7 +322,7 @@ def insert_profile_picture(username: str, request):
 
 def get_profile_picture(user):
     if (user and "image_id" in user):
-        return user["image_id"]
+        return "/static/images/userimage" + str(user["image_id"]) + ".jpg"
     
     return "static/images/defaultImg.jpg"
 
