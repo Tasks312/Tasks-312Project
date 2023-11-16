@@ -164,8 +164,6 @@ def create_app(test_config = None):
 
         return jsonify(game.as_JSON())
 
-    @app.route()
-
     @app.route("/register", methods=["POST"])
     def register():
         username = request.form["username_reg"]
