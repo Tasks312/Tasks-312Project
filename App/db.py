@@ -247,17 +247,39 @@ def save_lobby(gamelobby: lobby.Lobby):
     lobbys.update_one(
     {"lobby_id": gamelobby.id},
         {"$set": gamelobby.as_obj()})
+    
+def join_lobby(user, gamelobby: lobby.Lobby):
+    if (len(gamelobby.users) >= lobby.Lobby.MAX or user["username"] in gamelobby.users):
+        return False
+    
+    gamelobby.users.append(user["username"])
+
+    init_mongo().users.update_one(
+    {"username": user["username"]},
+    {"$set":{
+        "lobby_id": gamelobby.id
+    }})
+
+    return True
 
 # yep, it creates a lobby
-def create_lobby(title: str, desc: str):
+def create_lobby(lobby_title, lobby_description, user):
+    if (not lobby_title):
+        return ("No Lobby Title")
+    elif (not lobby_description):
+        return ("No Lobby Description")
+    
+    lobby_id = get_next_lobby_id()
+    new_lobby = lobby.Lobby(lobby_id, lobby_title, lobby_description)
     lobbys = init_mongo().lobbys
-    lobbyId = get_next_lobby_id()
+    
+    if (lobbys.find_one({"lobby_title": lobby_title})):
+        return ("Lobby already in use!")
 
-    gamelobby = lobby.Lobby(lobbyId, title, desc)
+    join_lobby(user, new_lobby)
+    lobbys.insert_one(new_lobby.as_obj())
 
-    lobbys.insert_one(gamelobby.as_obj())
-
-    return gamelobby
+    return None
 
 def get_all_users():
     users = init_mongo().users
@@ -298,19 +320,3 @@ def insert_profile_picture(username: str, request):
     
     return err
 
-def create_lobby(lobby_title, lobby_description):
-    if (not lobby_title):
-        return ("No Lobby Title")
-    elif (not lobby_description):
-        return ("No Lobby Description")
-    
-    lobby_id = get_next_lobby_id()
-    new_lobby = lobby.Lobby(lobby_id, lobby_title, lobby_description)
-    lobbys = init_mongo().lobbys
-    
-    if (lobbys.find_one({"lobby_title": lobby_title})):
-        return "Lobby already in use!"
-    
-    lobbys.insert_one(new_lobby.as_obj())
-
-    return None

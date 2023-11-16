@@ -7,7 +7,7 @@ import App.bcrypt as bcrypt
 def strToInt(string: str):
     if (string is None):
         return None
-    
+
     try:
         return int(string)
     except:
@@ -26,10 +26,29 @@ def create_app(test_config = None):
     def index():
         user = db.get_user_by_request(request)
         if(user):
+            profile = "static/images/defaultImg.jpg"
             if("image_id" in user):
-                return render_template("lobby.html", logged_username= user["username"], profile_picture = user["image_path"])
+                profile = user["image_path"]
 
-            return render_template("lobby.html", logged_username= user["username"])
+            if ("lobby_id" in user):
+                game = db.load_game("lobby_id")
+                if (game and not game.is_over()):
+                    other_player = game.p2 if game.p1 == user["username"] else game.p1
+                    other_user = db.get_user_by_name(other_player)
+
+                    other_profile = "static/images/defaultImg.jpg"
+                    if("image_id" in other_user):
+                        other_profile = other_user["image_path"]
+
+                    p1_pic = profile if game.p1 == user["username"] else other_profile
+                    p2_pic = profile if game.p2 == user["username"] else other_profile
+
+                    return render_template("board.html", p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic)
+
+                lobby = db.load_lobby("lobby_id")
+                # do something special if in a lobby?
+
+            return render_template("lobby.html", logged_username= user["username"], profile_picture=profile)
 
         return render_template("Authentication.html")
 
@@ -46,24 +65,72 @@ def create_app(test_config = None):
             response = make_response(redirect("/"), err)
             response.status_code = 400
             return response
-        
+
         response = make_response(redirect("/"),"OK")
         response.status_code = 301
         return response
-    
+
     @app.route("/create-lobby", methods=["POST"])
     def createLobby():
+
+        user = db.get_user_by_request(request)
+        if (not user):
+            response = make_response(redirect("/"), "Unauthorized")
+            response.status_code = 401
+            return response
+
         lobby_title = bcrypt.escape_html(request.form["lobby_title"])
         lobby_description = bcrypt.escape_html(request.form["lobby_description"])
-        
-        err = db.create_lobby(lobby_title, lobby_description)
-        
+
+        err = db.create_lobby(lobby_title, lobby_description, user)
+
         if (err):
             response = make_response(redirect("/"), err)
             response.status_code = 400
             return response
 
         response = make_response(redirect("/"),"OK")
+        response.status_code = 301
+        return response
+    
+    @app.route("/join-lobby/<lobby_id>", methods=["POST"])
+    def join_lobby(lobby_id = None ):
+        lobby_id = strToInt(lobby_id)
+        user = db.get_user_by_request(request)
+        if not user:
+            response = make_response(redirect("/"), "unauthorized")
+            response.status_code = 401
+            return response
+
+        lobby = db.load_lobby(lobby_id)
+
+        if not lobby:
+            response = make_response(redirect("/"), "lobby does not exist")
+            response.status_code = 401
+            return response
+
+        if (not db.join_lobby(user, lobby)):
+            response = make_response(redirect("/"), "cannot join game")
+            response.status_code = 401
+            return response
+
+        db.save_lobby(lobby)
+
+        game = db.load_game(lobby_id)
+        if game:
+            game.p2 = user["username"]
+            db.save_game(game)
+            response = make_response(redirect("/board/"+ str(lobby_id)), "OK")
+            response.status_code = 301
+            return response
+
+        game = db.create_game(player1=user["username"], player2= None)
+        db.save_game(game)
+
+        # response = make_response(redirect("/board/"+ str(lobby_id)), "OK") 
+        # response.status_code = 301
+        # return response
+        response = make_response(redirect("/board/"+str(lobby_id)),"OK")
         response.status_code = 301
         return response
     
@@ -79,9 +146,9 @@ def create_app(test_config = None):
                 "lobby_title": lobby["lobby_title"],
                 "lobby_description": lobby["lobby_description"],
             })
-            
+
         return jsonify(lobbyJSON)
-    
+
     @app.route("/board/<game_id>", methods=["GET", "POST"])
     def board(game_id = None):
         game_id = strToInt(game_id)
@@ -91,59 +158,14 @@ def create_app(test_config = None):
             response.status_code = 401
             return response
         game = db.load_game(game_id)
-        
+
         if not game:
             response = make_response(redirect("/"), "Game Not Found")
             response.status_code = 404
             return response
-        
-        return render_template("board.html") # Later can implement passing all users name, can pass users profile pictures etc
-        
-    @app.route("/join-lobby/<lobby_id>", methods=["POST"])
-    def join_lobby(lobby_id = None ):
-        lobby_id = strToInt(lobby_id)
-        user = db.get_user_by_request(request)
-        if not user:
-            response = make_response(redirect("/"), "unauthorized")
-            response.status_code = 401
-            return response
-        lobby = db.load_lobby(lobby_id)
-        
-        if not lobby:
-            response = make_response(redirect("/"), "lobby does not exist")
-            response.status_code = 401
-            return response
-        
-        if user["username"] in lobby.users:
-            response = make_response(redirect("/"), "already in the game")
-            response.status_code = 401
-            return response
-        
-        if len(lobby.users) >= 2:
-            response = make_response(redirect("/"), "Cannot join a full lobby")
-            response.status_code = 401
-            return response
-        
-        lobby.users.append(user["username"])
-        db.save_lobby(lobby)
-        
-        game = db.load_game(lobby_id)
-        if game:
-            game.p2 = user["username"]
-            db.save_game(game)
-            response = make_response(redirect("/board/"+ str(lobby_id)), "OK")
-            response.status_code = 301
-            return response
 
-        game = db.create_game(player1=user["username"], player2= None)
-        db.save_game(game)
-        
-        # response = make_response(redirect("/board/"+ str(lobby_id)), "OK") 
-        # response.status_code = 301
-        # return response
-        response = make_response(redirect("/board/"+str(lobby_id)),"OK")
-        response.status_code = 301
-        return response
+        return render_template("board.html") # Later can implement passing all users name, can pass users profile pictures etc
+
 
     @app.route("/register", methods=["POST"])
     def register():
@@ -160,7 +182,7 @@ def create_app(test_config = None):
         response = make_response(redirect("/"),"OK")
         response.status_code = 301
         return response
-    
+
     @app.route("/login", methods=["POST"])
     def login():
         username = request.form["username_login"]
@@ -172,7 +194,7 @@ def create_app(test_config = None):
             response = make_response(err)
             response.status_code = 400
             return response
-        
+
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         response.set_cookie("authtoken", token, max_age=36000, httponly = True)
@@ -189,7 +211,7 @@ def create_app(test_config = None):
     def createPost():
         title = bcrypt.escape_html(request.form["title"])
         description = bcrypt.escape_html(request.form["description"])
-        
+
         user = db.get_user_by_request(request)
         if not user:
             response = make_response(redirect("/"), "unauthorized")
@@ -200,7 +222,7 @@ def create_app(test_config = None):
         response = make_response(redirect("/"), "OK")
         response.status_code = 301
         return response
-    
+
     @app.route("/post-history")
     def postHistory():
         posts = db.get_all_posts()
@@ -215,7 +237,7 @@ def create_app(test_config = None):
                 "post_id": post["post_id"],
                 "like_count": post["like_count"]
             })
-            
+
         return jsonify(postJSON)
 
 
@@ -233,11 +255,11 @@ def create_app(test_config = None):
             response = make_response("Post does not exist.")
             response.status_code = 404
             return response
-        
+
         username = user["username"]
         if username in post.get("liked_by", []):
             return jsonify({"error": "User has already liked this post"}), 400
-        
+
         liked_by_updated = post.get("liked_by", []) + [username]
         like_count = post["like_count"] + 1
 
@@ -263,7 +285,7 @@ def create_app(test_config = None):
         username = user["username"]
         if username not in post.get("liked_by", []):
             return jsonify({"error": "User has not liked this post"}), 400
-        
+
         liked_by_updated = post.get("liked_by", [])
         liked_by_updated.remove(username)
         like_count = post["like_count"] - 1
@@ -277,5 +299,5 @@ def create_app(test_config = None):
     def set_nosniff(response):
         response.headers["X-Content-Type-Options"] = "nosniff"
         return response
-    
+
     return app
