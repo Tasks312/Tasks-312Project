@@ -43,7 +43,7 @@ def create_app(test_config = None):
 
                 lobby = db.load_lobby("lobby_id")
                 # do something special if in a lobby?
-
+            #return render_template('board.html',p1='Player1', p2='Player2', p1_pic = "static/images/pfp.png", p2_pic = "static/images/pfp.png")
             return render_template("lobby.html", logged_username= user["username"], profile_picture=profile)
 
         return render_template("Authentication.html")

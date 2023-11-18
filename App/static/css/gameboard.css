@@ -19,7 +19,7 @@ h1 {
     width: 700px;
     background-color: blue;
     border: 10px solid navy;
-    margin: -150px auto; 
+    margin: 0px auto; 
     display: flex;
     flex-wrap: wrap;
 }
@@ -44,40 +44,37 @@ h1 {
 #player-info {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin: 20px;
    
 }
 
 .player {
     text-align: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-   
+    
 }
 
 .player h3 {
     margin: 10px 0;
     font-size: 24px;
+    color: #333;
+    font-weight: bold;
 }
 
 
 
 
 
-.leftImage {
+.leftImage, .rightImage {
     
-    width: auto;
-    height: auto;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
     
 }
 
-.rightimage {
-   
-    width: auto;
-    height: auto;
-    
-}
+
 
 .container {
     position: absolute;
