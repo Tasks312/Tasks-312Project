@@ -38,12 +38,13 @@ def create_app(test_config = None):
                     p1_pic = profile if game.p1 == user["username"] else other_profile
                     p2_pic = profile if game.p2 == user["username"] else other_profile
                     winner = game.winner if game.is_over() else None
-
-                    return render_template("board.html", p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner)
+                    response = make_response(render_template("board.html", p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner))
+                    response.status_code = 200
+                    return response
+                    # return render_template("board.html", p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner)
 
                 lobby = db.load_lobby("lobby_id")
                 # do something special if in a lobby?
-            #return render_template('board.html',p1='Player1', p2='Player2', p1_pic = "static/images/pfp.png", p2_pic = "static/images/pfp.png")
             return render_template("lobby.html", logged_username= user["username"], profile_picture=profile)
 
         return render_template("Authentication.html")
@@ -124,9 +125,6 @@ def create_app(test_config = None):
         game.id = lobby.id
         db.save_game(game)
 
-        # response = make_response(redirect("/board/"+ str(lobby_id)), "OK") 
-        # response.status_code = 301
-        # return response
         response = make_response(redirect("/","OK"))
         response.status_code = 301
         return response
@@ -164,7 +162,23 @@ def create_app(test_config = None):
             response.status_code = 404
             return response
 
-        return jsonify(game.as_JSON())
+        # return jsonify(game.as_JSON())
+        profile = db.get_profile_picture(user)
+
+        if ("lobby_id" in user):
+            game = db.load_game(user["lobby_id"])
+            if (game and not game.is_over()):
+                other_player = game.p2 if game.p1 == user["username"] else game.p1
+
+                other_profile = db.get_profile_picture_from_username(other_player)
+
+                p1_pic = profile if game.p1 == user["username"] else other_profile
+                p2_pic = profile if game.p2 == user["username"] else other_profile
+                winner = game.winner if game.is_over() else None
+                response = make_response(render_template("board.html", p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner))
+                response.status_code = 200
+                return response
+        
     
     @app.route("/column-position/<column>", methods=["POST"])
     def placeChip(column = None):

@@ -18,6 +18,7 @@ function joinLobby(lobby_id) {
     request.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             console.log(this.response);
+            window.location.href = "/board/" + lobby_id
         }
     }
     request.open("POST", "/join-lobby/" + lobby_id);

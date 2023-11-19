@@ -4,23 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Connect 4</title>
-     <link rel="stylesheet" type="text/css" href="static/css/gameboard.css"/>
-    <script src="static/js/boardFunction.js"></script>
+     <link rel="stylesheet" type="text/css" href="/static/css/gameboard.css"/>
+    <script src="/static/js/boardFunction.js"></script>
 </head>
 <body>
     <h1>Connect Four Game</h1>
-    <h2 id="winner"></h2>
-    <div class="container" id="game-container">
-        <div id="player-info">
-            <div class="player">
-                <h3>{{p1}}</h3>
-                <img src={{p1_pic}} alt="Player 1 Image" class="leftImage">
-            </div>
-            <div class="player">
-                <h3>{{p2}}</h3>
-                <img src={{p2_pic}} alt="Player 2 Image" class="rightImage">
-            </div>
+    <h2 class="winner" id="winner"></h2>
+    <div id="player-info">
+        <div class="player">
+            <h3>{{p1}}</h3>
+            <img src={{p1_pic}} alt="Player 1 Image" class="leftImage">
         </div>
+        <div class="player">
+            <h3>{{p2}}</h3>
+            <img src={{p2_pic}} alt="Player 2 Image" class="rightImage">
+        </div>
+    </div>
+    <div class="container" id="game-container">
         <div id="board"></div>
     </div>
 </body>

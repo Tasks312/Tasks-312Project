@@ -324,7 +324,7 @@ def get_profile_picture(user):
     if (user and "image_id" in user):
         return "/static/images/userimage" + str(user["image_id"]) + ".jpg"
     
-    return "static/images/defaultImg.jpg"
+    return "/static/images/defaultImg.jpg"
 
 def get_profile_picture_from_username(username: str):
     return get_profile_picture(get_user_by_name(username))
