@@ -31,6 +31,25 @@ def create_app(test_config = None):
             if ("lobby_id" in user):
                 game = db.load_game(user["lobby_id"])
                 if (game and not game.is_over()):
+                    response = make_response(redirect("/game"), "OK")
+                    response.status_code = 301
+                    return response
+
+                lobby = db.load_lobby("lobby_id")
+                # do something special if in a lobby?
+            return render_template("lobby.html", logged_username= user["username"], profile_picture=profile)
+
+        return render_template("Authentication.html")
+
+    @app.route("/game")
+    def game():
+        user = db.get_user_by_request(request)
+        if(user):
+            profile = db.get_profile_picture(user)
+
+            if ("lobby_id" in user):
+                game = db.load_game(user["lobby_id"])
+                if (game and not game.is_over()):
                     other_player = game.p2 if game.p1 == user["username"] else game.p1
 
                     other_profile = db.get_profile_picture_from_username(other_player)
@@ -41,11 +60,10 @@ def create_app(test_config = None):
 
                     return render_template("board.html", game_id=game.id, p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner)
 
-                lobby = db.load_lobby("lobby_id")
-                # do something special if in a lobby?
-            return render_template("lobby.html", logged_username= user["username"], profile_picture=profile)
+        response = make_response(redirect("/"), "unauthorized")
+        response.status_code = 301
+        return response
 
-        return render_template("Authentication.html")
 
     @app.route("/profile-pic", methods=["POST"])
     def uploadProfilePic():
@@ -129,6 +147,13 @@ def create_app(test_config = None):
     
     @app.route("/lobby-list")
     def lobby_list():
+
+        user = db.get_user_by_request(request)
+        if user and "lobby_id" in user:
+            game = db.load_game(user["lobby_id"])
+            if (game and not game.is_over()):
+                return jsonify({"redirect": True})
+
 
         lobbys = db.get_all_lobbys()
 

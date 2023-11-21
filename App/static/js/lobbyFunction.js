@@ -16,9 +16,9 @@ function joinLobby(lobby_id) {
 
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
+        if (this.readyState === 4 && this.status === 301) {
             console.log(this.response);
-            window.location.href = "/board/" + lobby_id
+            window.location.href = "/game"
         }
     }
     request.open("POST", "/join-lobby/" + lobby_id);
@@ -40,10 +40,18 @@ function updateLobbyList() {
     request.onreadystatechange = function () {
         if (this.readyState === 4 && this.status === 200) {
             clearLobbyList();
+
             const lobbys = JSON.parse(this.response);
-            for (const each of lobbys) {
-                addLobbyToList(each);
+
+            if (lobbys.redirect !== undefined) {
+                window.location.href = "/game"
             }
+            else {
+                for (const each of lobbys) {
+                    addLobbyToList(each);
+                }
+            }
+           
         }
     }
     request.open("GET", "/lobby-list");
