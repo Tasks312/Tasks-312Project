@@ -23,7 +23,7 @@ class Gamestate:
         self.winner = "<"
 
         self.board = [EMPTY for _ in range(0, Gamestate.SPOTS)]
-        self.heights = [0 for _ in range(0, Gamestate.HEIGHT)]
+        self.heights = [0 for _ in range(0, Gamestate.WIDTH)]
 
     def can_place(self, x: int):
         if (x < 0 or x >= Gamestate.WIDTH):
@@ -61,7 +61,7 @@ class Gamestate:
 
     # useful for sending to players
     def as_JSON(self):
-        return json.dumps(self.as_obj())
+        return self.as_obj()
 
     # places a thing and checks for win, returns True on successful place
     # sets self.over to True when win is detected

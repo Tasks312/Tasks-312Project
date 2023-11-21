@@ -19,7 +19,7 @@ class Lobby:
         }
 
     def as_json(self):
-        return json.dumps(self.as_obj())
+        return self.as_obj()
 
 
 def from_obj(obj):

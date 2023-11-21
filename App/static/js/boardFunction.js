@@ -1,16 +1,51 @@
 var board;
-var totalRows = 6;
-var totalColumns = 7;
+const totalRows = 6;
+const totalColumns = 7;
 
-var currentPlayer; // stores the color of the current player
+var currentPlayer = 1; // stores the color of the current player
+var gameOver = false;
+var winner = "<";
 
 // if 1 player ==  RED
 //if 2 player == Yellow 
 
 window.onload = function () {
-    boardDisplay();
     click_column();
+    boardDisplay();
+    updateBoard();
+    setInterval(updateBoard, 2000);
 };
+
+function setBoard(response) {
+    const data = JSON.parse(response);
+
+    currentPlayer = data.turn;
+    gameOver = data.over;
+    winner = data.winner;
+
+    const board = data.board;
+
+    for (let y = 0; y < totalRows; y++) {
+        for (let x = 0; x < totalColumns; x++) {
+            placePiece(totalRows - 1 - y, x, board[y * totalColumns + x]);
+        }
+    }
+}
+
+function updateBoard() {
+
+    const request = new XMLHttpRequest();
+    request.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+            setBoard(this.response)
+        }
+    }
+
+    const game_id_div = document.getElementById("game-id");
+    request.open("GET", "/board/" + game_id_div.innerHTML);
+    request.send();
+
+}
 
 function boardDisplay() {
     // displays the board 
@@ -32,10 +67,10 @@ function boardDisplay() {
 function placePiece(row,column,currentPlayer){
     //places the red or yellow piece in the correct row and column css has styling
     const chip = document.getElementById(row + "-" + column);
-    if(currentPlayer === 'RED'){
+    if(currentPlayer === 1) {
         chip.classList.add('red-piece')
     }
-    else{
+    else if (currentPlayer === 2) {
         chip.classList.add('yellow-piece')
     }
 
@@ -69,10 +104,7 @@ function columnReq(column){
     const request = new XMLHttpRequest();
     request.onreadystatechange = function () {
         if ((this.readyState === 4) && (this.status === 200 )){
-                console.log('Column sent Successfully');
-        }
-        else{
-            console.error('Column was not sent  successfully');
+            setBoard(this.response);
         }
     }
 
