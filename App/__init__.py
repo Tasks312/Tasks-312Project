@@ -57,8 +57,8 @@ def create_app(test_config = None):
                     p1_pic = profile if game.p1 == user["username"] else other_profile
                     p2_pic = profile if game.p2 == user["username"] else other_profile
                     winner = game.winner if game.is_over() else None
-
-                    return render_template("board.html", game_id=game.id, p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner)
+                    game_image = db.get_lobby_image_from_id(game.id)
+                    return render_template("board.html", game_id=game.id, p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner, game_image=game_image)
 
         response = make_response(redirect("/"), "unauthorized")
         response.status_code = 301
@@ -94,8 +94,8 @@ def create_app(test_config = None):
 
         lobby_title = bcrypt.escape_html(request.form["lobby_title"])
         lobby_description = bcrypt.escape_html(request.form["lobby_description"])
-
-        err = db.create_lobby(lobby_title, lobby_description, user)
+        lobby_image = request.files["lobby_image"]
+        err = db.create_lobby(lobby_title, lobby_description, user, lobby_image)
 
         if (err):
             response = make_response(redirect("/"), err)

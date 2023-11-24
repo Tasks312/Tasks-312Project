@@ -263,7 +263,7 @@ def join_lobby(user, gamelobby: lobby.Lobby):
     return True
 
 # yep, it creates a lobby
-def create_lobby(lobby_title, lobby_description, user):
+def create_lobby(lobby_title, lobby_description, user, lobby_image):
     if (not lobby_title):
         return ("No Lobby Title")
     elif (not lobby_description):
@@ -278,26 +278,23 @@ def create_lobby(lobby_title, lobby_description, user):
 
     join_lobby(user, new_lobby)
     lobbys.insert_one(new_lobby.as_obj())
-
+    
+    if lobby_image is not None and lobby_image.filename != '':
+        lobby_image_path = "/static/images/LobbyImages/" + lobby_title +".jpg"
+        lobbys.update_one({"lobby_title": lobby_title},
+        {"$set":{
+            "lobby_image_path": lobby_image_path
+        }})
+        lobby_image.save("App" + lobby_image_path)
+    
     return None
 
-def get_all_users():
-    users = init_mongo().users
-    return users.find()
+def get_lobby_image_from_id(id):
+    lobby = get_lobby_by_id(id)
+    if ("lobby_image_path" in lobby):
+        return (lobby["lobby_image_path"])
 
-def get_next_image_id():
-    global next_image_id
-    if (next_image_id == -1):
-        all_users = get_all_users()
-        if (all_users):
-            high_image = all_users.sort("image_id", -1).limit(1)
-            for image in high_image:
-                if "image_id" in image:
-                    highestId = image["image_id"]
-                    next_image_id = int(highestId)
-    
-    next_image_id += 1
-    return next_image_id
+    return "/static/images/LobbyImages/TASKSFavicon.png"
 
 def insert_profile_picture(username: str, request):
     err = None
@@ -319,6 +316,23 @@ def insert_profile_picture(username: str, request):
     }})
     
     return err
+def get_all_users():
+    users = init_mongo().users
+    return users.find()
+
+def get_next_image_id():
+    global next_image_id
+    if (next_image_id == -1):
+        all_users = get_all_users()
+        if (all_users):
+            high_image = all_users.sort("image_id", -1).limit(1)
+            for image in high_image:
+                if "image_id" in image:
+                    highestId = image["image_id"]
+                    next_image_id = int(highestId)
+    
+    next_image_id += 1
+    return next_image_id
 
 def get_profile_picture(user):
     if (user and "image_id" in user):
