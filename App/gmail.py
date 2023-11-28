@@ -32,7 +32,7 @@ def init():
                 redirect_uri="http://localhost:8080/oauth"
             )
 
-            creds = flow.run_local_server(port=0, login_hint='tasks.312.cse@gmail.com')
+            creds = flow.run_local_server(port=8080, login_hint='tasks.312.cse@gmail.com')
 
         with open("token.json", "w") as token:
             token.write(creds.to_json())
