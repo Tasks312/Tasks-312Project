@@ -44,6 +44,10 @@ def create_app(test_config = None):
 
         return render_template("Authentication.html")
 
+    @app.route("/oauth")
+    def oauth():
+        return render_template(redirect("/"), "OK")
+
     @app.route("/game")
     def game():
         user = db.get_user_by_request(request)

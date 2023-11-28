@@ -28,10 +28,11 @@ def init():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json", SCOPES
+                "credentials.json", scopes=SCOPES,
+                redirect_uri="http://localhost:8080/oauth"
             )
 
-            creds = flow.run_local_server(port=0)
+            creds = flow.run_local_server(port=0, login_hint='tasks.312.cse@gmail.com')
 
         with open("token.json", "w") as token:
             token.write(creds.to_json())
