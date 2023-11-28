@@ -24,6 +24,28 @@ function setBoard(response) {
     winner = data.winner;
 
     const board = data.board;
+    const turnElement = document.getElementById("turn");
+    const winnerElement = document.getElementById("winner");
+    
+    if(gameOver){
+        turnElement.style.display = "none";
+        winnerElement.innerHTML = `${winner} is the winner!!!`;
+
+    }
+    
+    else{
+        
+        turnElement.style.display = "block";
+
+        if (currentPlayer === 1) {
+            turnElement.innerHTML = "It is RED's turn";
+        } 
+        
+        if(currentPlayer === 2) {
+            turnElement.innerHTML = "It is YELLOW's turn";
+        }
+
+    }
 
     for (let y = 0; y < totalRows; y++) {
         for (let x = 0; x < totalColumns; x++) {

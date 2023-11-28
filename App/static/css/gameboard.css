@@ -78,4 +78,6 @@ h1 {
 }
 .winner {
     background-color: white;
+    text-transform: uppercase;
+    font-weight: bold;
 }
