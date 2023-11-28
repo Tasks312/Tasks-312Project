@@ -76,6 +76,15 @@ h1 {
     border-radius: 50%;
     
 }
+
+.my_image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+
 .winner {
     background-color: white;
     text-transform: uppercase;

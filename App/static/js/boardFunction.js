@@ -39,10 +39,12 @@ function setBoard(response) {
 
         if (currentPlayer === 1) {
             turnElement.innerHTML = "It is RED's turn";
+            turnElement.style.backgroundColor = "red";
         } 
         
         if(currentPlayer === 2) {
             turnElement.innerHTML = "It is YELLOW's turn";
+            turnElement.style.backgroundColor = "yellow";
         }
 
     }
