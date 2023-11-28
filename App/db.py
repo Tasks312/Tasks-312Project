@@ -5,6 +5,7 @@ from flask import current_app, g
 import App.bcrypt as bcrypt
 import App.game as game
 import App.lobby as lobby
+import App.gmail as gmail
 
 next_post_id = -1
 next_game_id = -1
@@ -134,11 +135,13 @@ def get_next_lobby_id():
 
 # returns a tuple of (token, error). token is None on error
 # this is the unencrypted token so the cookie can be set
-def register(username: str, password: str):
+def register(username: str, password: str, email: str):
     if (not username):
         return "No username"
     elif (not password):
         return "No password"
+    elif (not email):
+        return "No email"
 
     username = bcrypt.escape_html(username)
 
@@ -147,13 +150,37 @@ def register(username: str, password: str):
     if (get_user_by_name(username)):
         return "Username already in use"
 
+    verif_token = bcrypt.gen_token(32)
+
     users.insert_one({
         "username": username,
         "password": bcrypt.hash(password),
+        "email": email,
+        "verification": verif_token,
+        "verified": False,
         "in_lobby": -1
     })
 
+    gmail.sendMessage(email, f"Press this here link to verify email! http://localhost:8080/verify/{verif_token}")
+
     return None
+
+def verify(token: str):
+    if (not token):
+        return False
+
+    users = init_mongo().users
+    user = users.find_one({"verification": token})
+
+    if (user == None):
+        return False
+
+    users.update_one({"verification": token},
+    {"$set":{
+        "verified": True,
+    }})
+
+    return True
 
 def login(username: str, password: str):
     if (not username):

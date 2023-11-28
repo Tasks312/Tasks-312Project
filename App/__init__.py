@@ -3,6 +3,7 @@ import os, threading, json
 
 import App.db as db
 import App.bcrypt as bcrypt
+import App.gmail as gmail
 
 def strToInt(string: str):
     if (string is None):
@@ -21,6 +22,8 @@ def create_app(test_config = None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    gmail.init()
 
     @app.route("/")
     def index():
@@ -219,8 +222,9 @@ def create_app(test_config = None):
     def register():
         username = request.form["username_reg"]
         password = request.form["password_reg"]
+        email = request.form["email_reg"]
 
-        err = db.register(username, password)
+        err = db.register(username, password, email)
 
         if (err):
             response = make_response(err)
@@ -230,6 +234,16 @@ def create_app(test_config = None):
         response = make_response(redirect("/"),"OK")
         response.status_code = 301
         return response
+    
+    @app.route("/verify/<token>")
+    def verify(token = None):
+        if (db.verify(token)):
+            return make_response("Verified!","OK")
+        else:
+            response = make_response("Bad Link :(", "Not Found")
+            response.status_code = 404
+            return response
+
 
     @app.route("/login", methods=["POST"])
     def login():

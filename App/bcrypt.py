@@ -16,8 +16,8 @@ def hash(string: str):
 def hash_compare(hash, rawstring: str):
     return init_bcrypt().check_password_hash(hash, rawstring)
 
-def gen_token():
-    return secrets.token_hex(16)
+def gen_token(len: int = 16):
+    return secrets.token_hex(len)
 
 def hash_token(token: str):
     return hashlib.sha256(token.encode()).hexdigest()
