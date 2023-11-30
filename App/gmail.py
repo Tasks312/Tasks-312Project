@@ -35,7 +35,16 @@ def init():
             creds = flow.run_local_server(port=8080, login_hint='tasks.312.cse@gmail.com')
 
         with open("token.json", "w") as token:
-            token.write(creds.to_json())
+            cjson = creds.to_json()
+    
+            # sometimes they just don't give us a refresh token.
+            # really cool behavior, thanks Google
+            if "refresh_token" not in cjson:
+                # python sucks, therefore, make a string copy
+                cjson = cjson[:-1]
+                cjson += ", \"refresh_token\": \"\"}"
+
+            token.write(cjson)
 
     service = build("gmail", "v1", credentials=creds)
 

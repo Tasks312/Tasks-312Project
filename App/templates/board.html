@@ -15,6 +15,10 @@
         <div>
             <p id="paragraph">
                 <h1>Welcome to the Ultimate Connect 4 Game</h1>
+                {% if verified == false %}
+                <h3>Your email needs to be verified! Check your email.</h3>
+                {% else %}
+                {% endif %}
             </p>
         </div>
     </div>

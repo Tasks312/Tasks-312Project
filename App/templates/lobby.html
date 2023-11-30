@@ -10,6 +10,11 @@
     <div class="page">
         <div class="header">
             <h1 class="title">Welcome to the Ultimate Connect 4 Game</h1>
+            {% if verified == false %}
+            <h3>Your email needs to be verified! Check your email.</h3>
+            {% else %}
+            <h3>Your email is verified! Thanks.</h3>
+            {% endif %}
         </div>
 
         <div class="content">
