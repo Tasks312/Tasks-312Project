@@ -3,7 +3,7 @@ function lobbyHTML(lobbyJSON) {
     const lobby_title = lobbyJSON.lobby_title;
     const lobby_description = lobbyJSON.lobby_description;
     const lobby_id = lobbyJSON.lobby_id;
-    const users = length(lobbyJSON.users)
+    const users = lobbyJSON.users
     // For later implement a status label, Open or Full(When 2 players in)
     let lobbyItemHtml =  '<div class="lobby-item">' +
         '<h3><b>Lobby Title:</b> ' + lobby_title + '</h3>' +
