@@ -161,7 +161,7 @@ def register(username: str, password: str, email: str):
         "in_lobby": -1
     })
 
-    gmail.sendMessage(email, f"Press this here link to verify email! http://localhost:8080/verify/{verif_token}")
+    gmail.sendMessage(email, f"Press this here link to verify email! http://tasks312.me/verify/{verif_token}")
 
     return None
 

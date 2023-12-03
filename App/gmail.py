@@ -29,7 +29,7 @@ def init():
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 "credentials.json", scopes=SCOPES,
-                redirect_uri="http://localhost:8080/oauth"
+                redirect_uri="http://tasks312.me/oauth"
             )
 
             creds = flow.run_local_server(port=8080, login_hint='tasks.312.cse@gmail.com')
