@@ -25,6 +25,7 @@ def handling_function(client_record,ip_address):
     #still supposed to be blocked? 
     current_time = datetime.now()
 
+
     if(client_record['blocked_time'] + timedelta(seconds=30) >= current_time and client_record['isBlocked'] == True):
         return overload_response()
     
@@ -50,7 +51,7 @@ def reset_operations(client_record):
     current_time = datetime.now()
     client_record['requests'] = 0
     client_record['blocked_time'] = timedelta(seconds=0)
-    client_record['request_time-period'] = timedelta(seconds=0)
+    client_record['request_time_period'] = timedelta(seconds=0)
     client_record['isBlocked'] = False
     client_record['first_request_time'] = current_time
     return success_response()
