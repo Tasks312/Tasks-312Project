@@ -11,7 +11,8 @@ def get_ip():
 def limit_rate(ip_address):
     if(ip_address not in ip_dictionary):
         current_time = datetime.now()
-        record = {'requests': 0, 'blocked_time': timedelta(seconds=0), 'request_time_period': timedelta(seconds=0),'isBlocked':False, 'first_request_time': current_time}
+        zero_datetime = datetime(1, 1, 1, 0, 0, 0, 0)
+        record = {'requests': 0, 'blocked_time': zero_datetime, 'request_time_period': zero_datetime,'isBlocked':False, 'first_request_time': current_time}
         ip_dictionary[ip_address] = record
         return success_response()
     else:
@@ -22,9 +23,10 @@ def handling_function(client_record,ip_address):
    
     #still supposed to be blocked? 
     current_time = datetime.now()
+    
 
 
-    if(client_record['blocked_time'] + timedelta(seconds=30) >= current_time and client_record['isBlocked'] == True):
+    if ((current_time >= (client_record['blocked_time'] + timedelta(seconds=30))) and client_record['isBlocked']):
         return overload_response()
     
     # need to block 
@@ -47,9 +49,10 @@ def handling_function(client_record,ip_address):
 
 def reset_operations(client_record):
     current_time = datetime.now()
+    zero_datetime = datetime(1, 1, 1, 0, 0, 0, 0)
     client_record['requests'] = 0
-    client_record['blocked_time'] = timedelta(seconds=0)
-    client_record['request_time_period'] = timedelta(seconds=0)
+    client_record['blocked_time'] = zero_datetime
+    client_record['request_time_period'] = zero_datetime
     client_record['isBlocked'] = False
     client_record['first_request_time'] = current_time
     return success_response()
