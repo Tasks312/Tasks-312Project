@@ -11,8 +11,8 @@ def get_ip():
 def limit_rate(ip_address):
     if(ip_address not in ip_dictionary):
         current_time = datetime.now()
-        zero_datetime = datetime(1, 1, 1, 0, 0, 0, 0)
-        record = {'requests': 0, 'blocked_time': zero_datetime, 'request_time_period': zero_datetime,'isBlocked':False, 'first_request_time': current_time}
+        #zero_datetime = datetime(1, 1, 1, 0, 0, 0, 0)
+        record = {'requests': 0, 'blocked_time': current_time, 'request_time_period': current_time,'isBlocked':False, 'first_request_time': current_time}
         ip_dictionary[ip_address] = record
         return success_response()
     else:
@@ -23,22 +23,31 @@ def handling_function(client_record,ip_address):
    
     #still supposed to be blocked? 
     current_time = datetime.now()
-    
+    blocked_time = client_record['blocked_time']
+    block_elapsed = current_time - blocked_time
+    blockSec = block_elapsed.total_seconds()
+    number_requests = client_record['requests']
+
+    original_time = client_record['first_request_time']
+    total_elapsed = current_time - original_time
+    totalSec = total_elapsed.total_seconds()
 
 
-    if ((current_time >= (client_record['blocked_time'] + timedelta(seconds=30))) and client_record['isBlocked']):
+
+
+    if ((timedelta(seconds=30) >= timedelta(seconds=blockSec)) and client_record['isBlocked'] == True):
         return overload_response()
     
     # need to block 
-    if ((client_record['requests'] > 50) and (abs(current_time - client_record['first_request_time'])<= timedelta(seconds=10))):
+    if ((number_requests > 8) and (timedelta(seconds = totalSec)<= timedelta(seconds=10))):
         return(block_function(client_record))
 
     #blocked time period is over 
-    if(current_time > client_record['blocked_time'] + timedelta(seconds=30) and client_record['isBlocked'] == True):
+    if( timedelta(seconds=blockSec)> timedelta(seconds=30) and client_record['isBlocked'] == True):
         return(unblock_function(client_record))
     
     # case where more then 50 requests in time more then 10 seconds: 
-    if ((client_record['requests'] > 50) and (abs(current_time - client_record['first_request_time']) >= timedelta(seconds=10))):
+    if ((number_requests > 8) and (timedelta(seconds = totalSec)>= timedelta(seconds=10))):
         return(reset_operations(client_record))
         
     else:
@@ -49,10 +58,9 @@ def handling_function(client_record,ip_address):
 
 def reset_operations(client_record):
     current_time = datetime.now()
-    zero_datetime = datetime(1, 1, 1, 0, 0, 0, 0)
     client_record['requests'] = 0
-    client_record['blocked_time'] = zero_datetime
-    client_record['request_time_period'] = zero_datetime
+    client_record['blocked_time'] = current_time
+    client_record['request_time_period'] = current_time
     client_record['isBlocked'] = False
     client_record['first_request_time'] = current_time
     return success_response()
