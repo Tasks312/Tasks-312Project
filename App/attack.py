@@ -5,8 +5,12 @@ from datetime import datetime, timedelta
 ip_dictionary = {}
 
 def get_ip():
-    return request.headers.get('X-Real-IP')
+    client_ip = request.headers.get('X-Real-IP')
     #gets the ip check nginx.conf 
+    if(client_ip):
+        return client_ip
+    else:
+        return request.remote_addr
 
 def limit_rate(ip_address):
     if(ip_address not in ip_dictionary):
@@ -83,8 +87,9 @@ def unblock_function(client_record):
 
 
 def overload_response():
-    response = make_response(redirect('/'), 'Too Many Requests. Please try again later.')
-    response.status_code = 429
+    response = make_response(redirect('/'), 429)
+    response.headers['Content-Type'] = 'text/plain'
+    response.data = 'Too Many Requests. Please try again later.'
     return response
 
 def success_response():
