@@ -3,6 +3,7 @@
 
 import base64
 import os
+import traceback
 
 from email.message import EmailMessage
 from google.auth.transport.requests import Request
@@ -18,41 +19,47 @@ service = None
 def init():
     global service
 
-    creds = None
+    try:
+        creds = None
 
-    if (os.path.exists("token.json")):
-        creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+        if (os.path.exists("token.json")):
+            creds = Credentials.from_authorized_user_file("token.json", SCOPES)
 
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                "credentials.json", scopes=SCOPES,
-                redirect_uri="http://tasks312.me/oauth"
-            )
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    "credentials.json", scopes=SCOPES,
+                    redirect_uri="http://tasks312.me/oauth"
+                )
 
-            creds = flow.run_local_server(port=8080, login_hint='tasks.312.cse@gmail.com')
+                creds = flow.run_local_server(port=8080, login_hint='tasks.312.cse@gmail.com')
 
-        with open("token.json", "w") as token:
-            cjson = creds.to_json()
-    
-            # sometimes they just don't give us a refresh token.
-            # really cool behavior, thanks Google
-            if "refresh_token" not in cjson:
-                # python sucks, therefore, make a string copy
-                cjson = cjson[:-1]
-                cjson += ", \"refresh_token\": \"\"}"
+            with open("token.json", "w") as token:
+                cjson = creds.to_json()
+        
+                # sometimes they just don't give us a refresh token.
+                # really cool behavior, thanks Google
+                if "refresh_token" not in cjson:
+                    # python sucks, therefore, make a string copy
+                    cjson = cjson[:-1]
+                    cjson += ", \"refresh_token\": \"\"}"
 
-            token.write(cjson)
+                token.write(cjson)
 
-    service = build("gmail", "v1", credentials=creds)
+        service = build("gmail", "v1", credentials=creds)
+    except Exception as e:
+        traceback.print_exc()
 
 def sendMessage(to: str, body: str, subject: str = "Verify Email"):
     global service
     
     if (service == None):
         init()
+
+    if (service == None):
+        return None
 
     message = EmailMessage()
 
