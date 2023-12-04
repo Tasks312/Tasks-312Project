@@ -30,7 +30,7 @@ def handling_function(client_record,ip_address):
         return overload_response()
     
     # need to block 
-    if((client_record['requests'] > 50) and (client_record['first_request_time']-current_time <=timedelta(seconds=10))):
+    if ((client_record['requests'] > 50) and (abs(current_time - client_record['first_request_time'])<= timedelta(seconds=10))):
         return(block_function(client_record))
 
     #blocked time period is over 
@@ -38,7 +38,7 @@ def handling_function(client_record,ip_address):
         return(unblock_function(client_record))
     
     # case where more then 50 requests in time more then 10 seconds: 
-    if((client_record['requests'] > 50) and (client_record['first_request_time']-current_time > timedelta(seconds=10))):
+    if ((client_record['requests'] > 50) and (abs(current_time - client_record['first_request_time']) >= timedelta(seconds=10))):
         return(reset_operations(client_record))
         
     else:
