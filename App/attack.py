@@ -1,29 +1,58 @@
 from flask import Flask,request,make_response,redirect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from datetime import datetime, timedelta
 
 
 ip_dictionary = {}
-total_request = 50  #requests
-allowed_time = 10 #seconds 
-ip_block = 30 #seconds 
 
 def get_ip():
     return request.headers.get('X-Real-IP')
     #gets the ip check nginx.conf 
 
-def handling_function(client_record,ip_address):
-    if(client_record['is_blocked']):
-        None
-
 def limit_rate(ip_address):
     if(ip_address not in ip_dictionary):
-        record = {'requests': 0, 'blocked_time': 0, 'request_time_period': None,
-                  'is_blocked':False}
+        current_time = datetime.now()
+        record = {'requests': 0, 'blocked_time': timedelta(seconds=0), 'request_time_period': timedelta(seconds=0),'isBlocked':False, 'first_request_time': current_time}
         ip_dictionary[ip_address] = record
 
     client_record = ip_dictionary[ip_address]
-    handling_function(client_record,ip_address)
+    return handling_function(client_record,ip_address)
+
+def handling_function(client_record,ip_address):
+   
+    #still supposed to be blocked? 
+    current_time = datetime.now()
+
+    if(client_record['blocked_time'] + timedelta(seconds=30) >= current_time and client_record['isBlocked'] == True):
+        return overload_response()
+    
+    # need to block 
+    if((client_record['requests'] > 50) and (client_record['first_request_time']-current_time <=timedelta(seconds=10))):
+        return(block_function(client_record))
+
+    #blocked time period is over 
+    if(current_time > client_record['blocked_time'] + timedelta(seconds=30) and client_record['isBlocked'] == True):
+        return(unblock_function(client_record))
+        
+
+    client_record['requests'] += 1
+    client_record['request_time_period'] = current_time
+
+def block_function(client_record):
+    current_time = datetime.now()
+    client_record['blocked_time'] = current_time
+    client_record['isBlocked'] = True
+    return overload_response()
+
+
+
+def unblock_function(client_record):
+    client_record['isBlocked'] = False
+    client_record['requests'] = 0
+    current_time = datetime.now()
+    client_record['first_request_time'] = current_time
+
 
 
 def overload_response():
