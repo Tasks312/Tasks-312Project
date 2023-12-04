@@ -1,16 +1,25 @@
-
+d
 function lobbyHTML(lobbyJSON) {
     const lobby_title = lobbyJSON.lobby_title;
     const lobby_description = lobbyJSON.lobby_description;
     const lobby_id = lobbyJSON.lobby_id;
     const users = lobbyJSON.users
-    // For later implement a status label, Open or Full(When 2 players in)
-    let lobbyItemHtml =  '<div class="lobby-item">' +
-        '<h3><b>Lobby Title:</b> ' + lobby_title + '</h3>' +
-        '<p><b>Description:</b> ' + lobby_description + '</p>' +
-        '<p>Number of players in lobby: '+ users +'</p>' +
-        '<button class="join-button" onclick="joinLobby(\'' + lobby_id + '\')">Join</button>' +
-        '</div>';
+    const lobby_image = lobbyJSON.lobby_image
+
+    // Card Style
+    let lobbyItemHtml = '<div class="card">' +
+        '<div class="leftImage"> <img src="' + lobby_image +'" alt= Lobby Image"> </div>'+
+        '<div class="container"> <h3><b> Title: </b>' + lobby_title + '</h3>' +
+        '<p><b> Description: </b>' + lobby_description +'</p>'+
+        '<p> Players in lobby: '+ users +'</p>' +
+        '<button class="join-button" onclick="joinLobby(\'' + lobby_id + '\')">Join</button>' + '</div> </div>';
+    
+    // let lobbyItemHtml =  '<div class="lobby-item">' +
+    //     '<h3><b>Lobby Title:</b> ' + lobby_title + '</h3>' +
+    //     '<p><b>Description:</b> ' + lobby_description + '</p>' +
+    //     '<p>Number of players in lobby: '+ users +'</p>' +
+    //     '<button class="join-button" onclick="joinLobby(\'' + lobby_id + '\')">Join</button>' +
+    //     '</div>';
     return lobbyItemHtml;
 }
 

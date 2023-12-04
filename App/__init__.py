@@ -174,7 +174,8 @@ def create_app(test_config = None):
                 "lobby_id": lobby["lobby_id"],
                 "lobby_title": lobby["lobby_title"],
                 "lobby_description": lobby["lobby_description"],
-                "users": len(lobby["users"])
+                "users": len(lobby["users"]),
+                "lobby_image": db.get_lobby_image_from_id(lobby["lobby_id"])
             })
 
         return jsonify(lobbyJSON)
