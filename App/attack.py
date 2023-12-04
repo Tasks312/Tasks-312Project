@@ -97,48 +97,48 @@ def success_response():
     response.status_code = 200
     return response
 
-def block_attack(ip_address , ip_dictionary):
-        if ip_address not in ip_dictionary:
-            dict[ip]= [datatime.now(),1,0]
-        else:
-            if check_delay:
-                response = make_response(redirect('/'), 'Too Many Requests. Please try again later.')
-                response.status_code = 429
-                return response
-            prev_time = dict[ip][0]
-            response_amount = dict[ip][1]
-            seconds = seconds_difference(prev_time, datatime.now())
-            if(seconds <10.0):
-                dict[ip][1] += 1
-                if check_response_count:
-                        ip_dictionary[ip_address][2] = datatime.now()
-                        response = make_response(redirect('/'), 'Too Many Requests. Please try again later.')
-                        response.status_code = 429
-                        return response
-            else:
-                dict[ip][0] = datatime.now()
-                dict[ip][1] = 0
+# def block_attack(ip_address , ip_dictionary):
+#         if ip_address not in ip_dictionary:
+#             dict[ip]= [datatime.now(),1,0]
+#         else:
+#             if check_delay:
+#                 response = make_response(redirect('/'), 'Too Many Requests. Please try again later.')
+#                 response.status_code = 429
+#                 return response
+#             prev_time = dict[ip][0]
+#             response_amount = dict[ip][1]
+#             seconds = seconds_difference(prev_time, datatime.now())
+#             if(seconds <10.0):
+#                 dict[ip][1] += 1
+#                 if check_response_count:
+#                         ip_dictionary[ip_address][2] = datatime.now()
+#                         response = make_response(redirect('/'), 'Too Many Requests. Please try again later.')
+#                         response.status_code = 429
+#                         return response
+#             else:
+#                 dict[ip][0] = datatime.now()
+#                 dict[ip][1] = 0
 
-    def check_delay(ip_address,ip_dictionary):
-        the_delay = ip_dictionary[ip_address][2]
-        if the_delay != 0 :
-            seconds = seconds_difference(the_delay, datetime.now())
-            if seconds > 30:
-                dict[ip][2] = 0
-                return False
-            else:
-                return True
-        return False
+    # def check_delay(ip_address,ip_dictionary):
+    #     the_delay = ip_dictionary[ip_address][2]
+    #     if the_delay != 0 :
+    #         seconds = seconds_difference(the_delay, datetime.now())
+    #         if seconds > 30:
+    #             dict[ip][2] = 0
+    #             return False
+    #         else:
+    #             return True
+    #     return False
 
-    def check_response_count(ip_address,ip_dictionary):
-        the_responses = ip_dictionary[ip_address][1]
-        if (the_responses > 50):
-            return True
-        return False
-    def seconds_difference(time1, time2):
-        seconds = time2 - time1
-        seconds = seconds.total_seconds()
-        return seconds
+    # def check_response_count(ip_address,ip_dictionary):
+    #     the_responses = ip_dictionary[ip_address][1]
+    #     if (the_responses > 50):
+    #         return True
+    #     return False
+    # def seconds_difference(time1, time2):
+    #     seconds = time2 - time1
+    #     seconds = seconds.total_seconds()
+    #     return seconds
 
 
 
