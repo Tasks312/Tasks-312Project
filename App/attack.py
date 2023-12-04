@@ -15,9 +15,10 @@ def limit_rate(ip_address):
         current_time = datetime.now()
         record = {'requests': 0, 'blocked_time': timedelta(seconds=0), 'request_time_period': timedelta(seconds=0),'isBlocked':False, 'first_request_time': current_time}
         ip_dictionary[ip_address] = record
-
-    client_record = ip_dictionary[ip_address]
-    return handling_function(client_record,ip_address)
+        return success_response()
+    else:
+        client_record = ip_dictionary[ip_address]
+        return handling_function(client_record,ip_address)
 
 def handling_function(client_record,ip_address):
    
@@ -39,9 +40,10 @@ def handling_function(client_record,ip_address):
     if((client_record['requests'] > 50) and (client_record['first_request_time']-current_time > timedelta(seconds=10))):
         return(reset_operations(client_record))
         
-
-    client_record['requests'] += 1
-    client_record['request_time_period'] = current_time
+    else:
+        client_record['requests'] += 1
+        client_record['request_time_period'] = current_time
+        return success_response()
 
 
 def reset_operations(client_record):
@@ -51,6 +53,7 @@ def reset_operations(client_record):
     client_record['request_time-period'] = timedelta(seconds=0)
     client_record['isBlocked'] = False
     client_record['first_request_time'] = current_time
+    return success_response()
 
 def block_function(client_record):
     current_time = datetime.now()
@@ -65,6 +68,7 @@ def unblock_function(client_record):
     client_record['requests'] = 0
     current_time = datetime.now()
     client_record['first_request_time'] = current_time
+    return success_response()
 
 
 
@@ -72,3 +76,9 @@ def overload_response():
     response = make_response(redirect('/'), 'Too Many Requests. Please try again later.')
     response.status_code = 429
     return response
+
+def success_response():
+    response = make_response(redirect('/'), 'Request successful.')
+    response.status_code = 200
+    return response
+
