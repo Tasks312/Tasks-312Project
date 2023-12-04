@@ -127,7 +127,7 @@ class Gamestate:
 
             # /
             if (cuy >= 0 and cuy < Gamestate.HEIGHT):
-                if (self.board[cuy * Gamestate.HEIGHT + cx] == self.turn):
+                if (self.board[cuy * Gamestate.WIDTH + cx] == self.turn):
                     consecutive += 1
                     if (consecutive >= 4):
                         self.over = True
@@ -138,7 +138,7 @@ class Gamestate:
 
             # \
             if (cdy >= 0 and cdy < Gamestate.HEIGHT):
-                if (self.board[cdy * Gamestate.HEIGHT + cx] == self.turn):
+                if (self.board[cdy * Gamestate.WIDTH + cx] == self.turn):
                     consecutived += 1
                     if (consecutived >= 4):
                         self.over = True

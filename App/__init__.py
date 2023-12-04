@@ -66,8 +66,7 @@ def create_app(test_config = None):
                     winner = game.winner if game.is_over() else ""
                     game_image = db.get_lobby_image_from_id(game.id)
                     current_turn = game.get_turn_player()
-                    print("LINE 62")
-                    print(current_turn)
+
                     return render_template("board.html", verified=user["verified"], game_id=game.id, p1=game.p1, p2=game.p2, p1_pic=p1_pic, p2_pic=p2_pic, winner=winner, game_image=game_image, current_turn=current_turn)
 
         response = make_response(redirect("/"), "unauthorized")
@@ -147,8 +146,7 @@ def create_app(test_config = None):
             response.status_code = 301
             return response
 
-        game = db.create_game(lobby.users[0], lobby.users[1])
-        game.id = lobby.id
+        game = db.create_game(lobby.users[0], lobby.users[1], lobby.id)
         db.save_game(game)
 
         response = make_response(redirect("/","OK"))

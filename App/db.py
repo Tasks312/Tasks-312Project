@@ -239,9 +239,9 @@ def load_game(id: int):
     return None
 
 # player1 and player2 should be verified before this
-def create_game(player1: str, player2: str):
+def create_game(player1: str, player2: str, id : int):
     games = init_mongo().games
-    gameId = get_next_game_id()
+    gameId = id
     
     state = game.Gamestate(gameId, player1, player2)
 
