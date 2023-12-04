@@ -4,6 +4,7 @@ import os, threading, json
 import App.db as db
 import App.bcrypt as bcrypt
 import App.gmail as gmail
+import App.attack as attack
 
 def strToInt(string: str):
     if (string is None):
