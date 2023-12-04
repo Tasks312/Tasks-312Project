@@ -34,10 +34,23 @@ def handling_function(client_record,ip_address):
     #blocked time period is over 
     if(current_time > client_record['blocked_time'] + timedelta(seconds=30) and client_record['isBlocked'] == True):
         return(unblock_function(client_record))
+    
+    # case where more then 50 requests in time more then 10 seconds: 
+    if((client_record['requests'] > 50) and (client_record['first_request_time']-current_time > timedelta(seconds=10))):
+        return(reset_operations(client_record))
         
 
     client_record['requests'] += 1
     client_record['request_time_period'] = current_time
+
+
+def reset_operations(client_record):
+    current_time = datetime.now()
+    client_record['requests'] = 0
+    client_record['blocked_time'] = timedelta(seconds=0)
+    client_record['request_time-period'] = timedelta(seconds=0)
+    client_record['isBlocked'] = False
+    client_record['first_request_time'] = current_time
 
 def block_function(client_record):
     current_time = datetime.now()
