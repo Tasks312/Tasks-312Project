@@ -29,46 +29,46 @@ def create_app(test_config = None):
     @app.route("/")
     def index():
 
-        user_ip = attack.get_ip()
-        limit_result = attack.limit_rate(user_ip)
+        # user_ip = attack.get_ip()
+        # limit_result = attack.limit_rate(user_ip)
         
-        user = db.get_user_by_request(request)
-        if (limit_result.status_code == 200):
-        
-
-            if(user):
-                profile = db.get_profile_picture(user)
-
-                if ("lobby_id" in user):
-                    game = db.load_game(user["lobby_id"])
-                    if (game and not game.is_over()):
-                        response = make_response(redirect("/game"), "OK")
-                        response.status_code = 301
-                        return response
-
-                    lobby = db.load_lobby("lobby_id")
-                    # do something special if in a lobby?
-                return render_template("lobby.html", verified=user["verified"], logged_username= user["username"], profile_picture=profile)
-
-            return render_template("Authentication.html")
-        else:
-            return limit_result
         # user = db.get_user_by_request(request)
-        # if(user):
-        #     profile = db.get_profile_picture(user)
+        # if (limit_result.status_code == 200):
+        
 
-        #     if ("lobby_id" in user):
-        #         game = db.load_game(user["lobby_id"])
-        #         if (game and not game.is_over()):
-        #             response = make_response(redirect("/game"), "OK")
-        #             response.status_code = 301
-        #             return response
+        #     if(user):
+        #         profile = db.get_profile_picture(user)
 
-        #         lobby = db.load_lobby("lobby_id")
-        #         # do something special if in a lobby?
-        #     return render_template("lobby.html", verified=user["verified"], logged_username= user["username"], profile_picture=profile)
+        #         if ("lobby_id" in user):
+        #             game = db.load_game(user["lobby_id"])
+        #             if (game and not game.is_over()):
+        #                 response = make_response(redirect("/game"), "OK")
+        #                 response.status_code = 301
+        #                 return response
 
-        # return render_template("Authentication.html")
+        #             lobby = db.load_lobby("lobby_id")
+        #             # do something special if in a lobby?
+        #         return render_template("lobby.html", verified=user["verified"], logged_username= user["username"], profile_picture=profile)
+
+        #     return render_template("Authentication.html")
+        # else:
+        #     return limit_result
+        user = db.get_user_by_request(request)
+        if(user):
+            profile = db.get_profile_picture(user)
+
+            if ("lobby_id" in user):
+                game = db.load_game(user["lobby_id"])
+                if (game and not game.is_over()):
+                    response = make_response(redirect("/game"), "OK")
+                    response.status_code = 301
+                    return response
+
+                lobby = db.load_lobby("lobby_id")
+                # do something special if in a lobby?
+            return render_template("lobby.html", verified=user["verified"], logged_username= user["username"], profile_picture=profile)
+
+        return render_template("Authentication.html")
 
 
     @app.route("/oauth")
