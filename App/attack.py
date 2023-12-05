@@ -1,9 +1,12 @@
 from flask import Flask,request,make_response,redirect
-from datetime import datetime, timedelta
-
+from datetime import datetime
 
 
 ip_dictionary = {}
+REQUEST_LIMIT = 8
+BLOCK_TIME = 30
+REQUEST_WINDOW = 10 
+
 
 def get_ip():
     client_ip = request.headers.get('X-Real-IP')
@@ -15,18 +18,27 @@ def get_ip():
 
 def limit_rate(ip_address):
     if(ip_address not in ip_dictionary):
-        current_time = datetime.now()
-        #zero_datetime = datetime(1, 1, 1, 0, 0, 0, 0)
-        record = {'requests': 0, 'blocked_time': current_time, 'request_time_period': current_time,'isBlocked':False, 'first_request_time': current_time}
-        ip_dictionary[ip_address] = record
+        initalize_ip(ip_address)
         return success_response()
     else:
         client_record = ip_dictionary[ip_address]
         return handling_function(client_record,ip_address)
+    
+def initalize_ip(ip_address):
+    current_time = datetime.now()
+    record = {
+     'requests': 0,
+     'blocked_time': current_time,
+     'request_time_period': current_time,
+     'isBlocked':False,
+     'first_request_time': current_time
+    }
+    ip_dictionary[ip_address] = record
+
 
 def handling_function(client_record,ip_address):
    
-    #still supposed to be blocked? 
+     
     current_time = datetime.now()
     blocked_time = client_record['blocked_time']
     blockSec = (current_time - blocked_time).total_seconds()
@@ -35,24 +47,21 @@ def handling_function(client_record,ip_address):
     original_time = client_record['first_request_time']
     totalSec = (current_time - original_time).total_seconds()
     
-
-
-
-
-    if ( 30 >=  blockSec and client_record['isBlocked'] == True):
+    #still supposed to be blocked
+    if ( BLOCK_TIME >=  blockSec and client_record['isBlocked'] == True):
         return overload_response()
     
     # need to block 
-    if (number_requests > 50 and totalSec <= 10):
+    if (number_requests > REQUEST_LIMIT and totalSec <= REQUEST_WINDOW):
 
         return(block_function(client_record))
 
     #blocked time period is over 
-    if( blockSec > 30 and client_record['isBlocked'] == True):
+    if( blockSec > BLOCK_TIME and client_record['isBlocked'] == True):
         return(unblock_function(client_record))
     
     # case where more then 50 requests in time more then 10 seconds: 
-    if (number_requests > 50 and totalSec > 10):
+    if (number_requests > REQUEST_LIMIT and totalSec > REQUEST_WINDOW):
         return(reset_operations(client_record))
         
     else:
